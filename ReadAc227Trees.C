@@ -28,34 +28,8 @@ using namespace std;
 
 tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(string TreeDir, const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG){
 
-int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
-
-	
-//===============================================================
-//Set variables for alpha tree
-	/*
-	TChain AlphaChain("TAlpha");
-	AlphaChain.Add(Form("%s/AlphaTree*",TreeDir));
-
-	Double_t alpha_tstamp, tstamp;
-	Long64_t alpha_evt, evt;
-	Int_t    alpha_seg, seg;
-	Float_t  alpha_E, E;
-	Double_t alpha_t, t;
-	Float_t  alpha_z, z;
-	Float_t  alpha_PSD, PSD;
-
-	AlphaChain.SetBranchAddress("tstamp", &alpha_tstamp);
-	AlphaChain.SetBranchAddress("evt",    &alpha_evt);
-	AlphaChain.SetBranchAddress("seg",    &alpha_seg);
-	AlphaChain.SetBranchAddress("E",      &alpha_E);
-	AlphaChain.SetBranchAddress("t",      &alpha_t);
-	AlphaChain.SetBranchAddress("z",      &alpha_z);
-	AlphaChain.SetBranchAddress("PSD",    &alpha_PSD);
-
-	Int_t nAlphaEvents = AlphaChain.GetEntries();
-	printf("Number of alpha events: %d \n",nAlphaEvents);
-	*/
+	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
+	bool exclude;
 
 //===============================================================
 //Set variables for Ac-227 tree
@@ -80,7 +54,6 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 	AcChain.Add(Form("%s/180316_Rampdown/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series001_AcTrees.root",getenv("P2X_ANALYZED")));
-
 
 	Double_t Ac_tstamp ;
 	Float_t  Ac_promptECut[2];
@@ -179,6 +152,8 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 	double posMin = -1200, posMax = 1200;	//[mm]
 
 	for(int i=0;i<NUMCELLS;i++){
+		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
+		if(!exclude){
 		TH1F* hNewSelectDt = new TH1F(Form("hSelectDt_%i",i),Form("Cell %i: Dt of Selection Events;dt [ms];Counts",i),numDtBins,selectDtMin,selectDtMax);
 		TH1F* hNewBGDt     = new TH1F(Form("hBGDt_%i",i),Form("Cell %i: Dt of BG Events;dt [ms];Counts",i),numDtBins,BGDtMin,BGDtMax);
 		vhSelectDt.push_back(hNewSelectDt);
@@ -211,6 +186,7 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 		TH1F* hNewBGDelayPos     = new TH1F(Form("hBGDelayPos_%i",i),Form("Cell %i: Position of BG Delay Events;z [mm];Counts",i),numPosBins,posMin,posMax);
 		vhSelectDelayPos.push_back(hNewSelectDelayPos);
 		vhBGDelayPos.push_back(hNewBGDelayPos);
+		}
 	}
 
 	TH1F* hSelectDt_AllCells = new TH1F("hSelectDt_AllCells","All Cells: Dt of Selection Events;dt [ms];Counts",numDtBins,selectDtMin,selectDtMax);
@@ -276,8 +252,8 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 
 		prevTime = promptTime;	
 
-		segNum = Ac_seg[1];
-		bool exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), segNum) != end(ExcludeCellArr);
+		segNum = Ac_seg[0];
+		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), segNum) != end(ExcludeCellArr);
 
 		//check if there is a selected delay event
 		if(Ac_evt[1]!=0 && !exclude){
@@ -365,7 +341,7 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 	TH1F *hDelayE_AllCells    = nullptr;
 	TH1F *hRnPoDz_AllCells    = nullptr;
 
-	double rate,    N,    lifetime,    promptPSDEff,    delayPSDEff,     promptEnEff,    delayEnEff,    posEff,    totEff,    PoMean, PoPSDMean;
+	double rate,    N,    lifetime,    promptPSDEff,    delayPSDEff,     promptEnEff,    delayEnEff,    posEff,    totEff,    PoMean, 	 PoPSDMean;
 	double rateErr, NErr, lifetimeErr, promptPSDEffErr, delayPSDEffErr,  promptEnEffErr, delayEnEffErr, posEffErr, totEffErr, PoMeanErr, PoPSDMeanErr;
 
 	vector<double> vRate,    vN,    vLifetime,    vPromptPSDEff,    vDelayPSDEff,    vPromptEnEff,    vDelayEnEff,    vPosEff,    vTotEff,   vPoMean, vPoPSDMean;
@@ -380,7 +356,11 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 	printf("Subtracting histograms \n");
 
 	for(int i=0;i<NUMCELLS;i++){		
+		rate = 0.0,    N = 0.0,    lifetime = 0.0,    promptPSDEff = 0.0,    delayPSDEff = 0.0,     promptEnEff = 0.0,    delayEnEff = 0.0,    posEff = 0.0,    totEff = 0.0,    PoMean = 0.0, PoPSDMean = 0.0;
+		rateErr = 0.0, NErr = 0.0, lifetimeErr = 0.0, promptPSDEffErr = 0.0, delayPSDEffErr = 0.0,  promptEnEffErr = 0.0, delayEnEffErr = 0.0, posEffErr = 0.0, totEffErr = 0.0, PoMeanErr = 0.0, PoPSDMeanErr = 0.0;
 
+		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
+		if(!exclude){
 		//--------------------------------------------------------------------------
 		//Subtract dt histograms
 		hRnPoDt = (TH1F*)vhSelectDt[i]->Clone();
@@ -516,29 +496,6 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 		rate = N/(livetime*totEff);
 		rateErr = rate*sqrt(pow(NErr/N,2) + pow(promptPSDEffErr/promptPSDEff,2) + pow(delayPSDEffErr/delayPSDEff,2) + pow(promptEnEffErr/promptEnEff,2) + pow(delayEnEffErr/delayEnEff,2) + pow(posEffErr/posEff,2)); 
 
-		vRate.push_back(rate);
-		vRateErr.push_back(rateErr);
-		vN.push_back(N);
-		vNErr.push_back(NErr);
-		vLifetime.push_back(lifetime);
-		vLifetimeErr.push_back(lifetimeErr);
-		vPromptPSDEff.push_back(promptPSDEff);
-		vPromptPSDEffErr.push_back(promptPSDEffErr);
-		vDelayPSDEff.push_back(delayPSDEff);
-		vDelayPSDEffErr.push_back(delayPSDEffErr);
-		vPromptEnEff.push_back(promptEnEff);
-		vPromptEnEffErr.push_back(promptEnEffErr);
-		vDelayEnEff.push_back(delayEnEff);
-		vDelayEnEffErr.push_back(delayEnEffErr);
-		vPosEff.push_back(posEff);
-		vPosEffErr.push_back(posEffErr);
-		vTotEff.push_back(totEff);
-		vTotEffErr.push_back(totEffErr);
-		vPoMean.push_back(PoMean);
-		vPoMeanErr.push_back(PoMeanErr);		
-		vPoPSDMean.push_back(PoPSDMean);
-		vPoPSDMeanErr.push_back(PoPSDMeanErr);		
-
 		//--------------------------------------------------------------------------
 		//Draw histograms
 		gStyle->SetOptStat(11);
@@ -673,6 +630,31 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 		delete cRnPoPSD;
 		delete cRnPoE;
 		delete cRnPoDz;
+		}
+
+		vRate.push_back(rate);
+		vRateErr.push_back(rateErr);
+		vN.push_back(N);
+		vNErr.push_back(NErr);
+		vLifetime.push_back(lifetime);
+		vLifetimeErr.push_back(lifetimeErr);
+		vPromptPSDEff.push_back(promptPSDEff);
+		vPromptPSDEffErr.push_back(promptPSDEffErr);
+		vDelayPSDEff.push_back(delayPSDEff);
+		vDelayPSDEffErr.push_back(delayPSDEffErr);
+		vPromptEnEff.push_back(promptEnEff);
+		vPromptEnEffErr.push_back(promptEnEffErr);
+		vDelayEnEff.push_back(delayEnEff);
+		vDelayEnEffErr.push_back(delayEnEffErr);
+		vPosEff.push_back(posEff);
+		vPosEffErr.push_back(posEffErr);
+		vTotEff.push_back(totEff);
+		vTotEffErr.push_back(totEffErr);
+		vPoMean.push_back(PoMean);
+		vPoMeanErr.push_back(PoMeanErr);		
+		vPoPSDMean.push_back(PoPSDMean);
+		vPoPSDMeanErr.push_back(PoPSDMeanErr);		
+
 	}
 
 //===============================================================
@@ -1017,6 +999,9 @@ int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73
 
 void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG){
 
+	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
+	bool exclude;
+
 	int IDX = 0;
 
 	//--------------------------------------------------------------------------
@@ -1137,6 +1122,10 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		double rateCellRel = vRate[0][relIdx];
 
 		for(int i=0;i<NUMCELLS;i++){
+
+			exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
+			if(!exclude){
+			
 			int biny = i+1;
 
 			hRate->SetBinContent(n,biny,vRate[0][i]*1e6);	//convert to mHz
@@ -1164,7 +1153,8 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 			int pt = n-1;
 			vRateGraphs[i]->SetPoint(pt,tstamp,vRate[0][i]*1e6);
 			vRateGraphs[i]->SetPointError(pt,0,vRate[1][i]*1e6);		
-	
+
+			}	
 		}
 
 		gStyle->SetPaintTextFormat("2.2f");
@@ -1210,127 +1200,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	gStyle->SetPalette(kTemperatureMap);
 
 	int numCellDivisions = (NUMCELLS/11) + 100*2 + 10000*0;
-/*
-	TCanvas *cRate = new TCanvas("cRate","Rate",2000,900);
-	cRate->Divide(2,1);
-	cRate->cd(1);
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hRate->GetXaxis()->SetTimeDisplay(1);
-	hRate->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hRate->Draw("colz");
-	hRate->GetXaxis()->SetLabelOffset(0.028);
-	hRate->GetYaxis()->SetTitleOffset(1.1);
-	hRate->GetZaxis()->SetTitleOffset(1.55);
-	hRate->GetXaxis()->SetNdivisions(-505);
-	hRate->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cRate->cd(2);
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hRateErr->GetXaxis()->SetTimeDisplay(1);
-	hRateErr->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hRateErr->Draw("colz");
-	hRateErr->GetXaxis()->SetLabelOffset(0.028);
-	hRateErr->GetYaxis()->SetTitleOffset(1.1);
-	hRateErr->GetZaxis()->SetTitleOffset(1.55);
-	hRateErr->GetXaxis()->SetNdivisions(-505);
-	hRateErr->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cRate->SaveAs("Rate.pdf");
-
-	
-	TCanvas *cN = new TCanvas("cN","N",2000,900);
-	cN->Divide(2,1);
-	cN->cd(1);
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hN->GetXaxis()->SetTimeDisplay(1);
-	hN->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hN->Draw("colz");
-	hN->GetXaxis()->SetLabelOffset(0.028);
-	hN->GetYaxis()->SetTitleOffset(1.1);
-	hN->GetZaxis()->SetTitleOffset(1.55);
-	hN->GetXaxis()->SetNdivisions(-505);
-	hN->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cN->cd(2);
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hNErr->GetXaxis()->SetTimeDisplay(1);
-	hNErr->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hNErr->Draw("colz");
-	hNErr->GetXaxis()->SetLabelOffset(0.028);
-	hNErr->GetYaxis()->SetTitleOffset(1.1);
-	hNErr->GetZaxis()->SetTitleOffset(1.4);
-	hNErr->GetXaxis()->SetNdivisions(-505);
-	hNErr->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cN->SaveAs("N.pdf");	
-
-	
-	TCanvas *cLifetime = new TCanvas("cLifetime","Lifetime",2000,900);
-	cLifetime->Divide(2,1);
-	cLifetime->cd(1);	
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hLifetime->GetXaxis()->SetTimeDisplay(1);
-	hLifetime->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hLifetime->Draw("colz");
-	hLifetime->GetXaxis()->SetLabelOffset(0.028);
-	hLifetime->GetYaxis()->SetTitleOffset(1.1);
-	hLifetime->GetZaxis()->SetTitleOffset(1.55);
-	hLifetime->GetXaxis()->SetNdivisions(-505);
-	hLifetime->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cLifetime->cd(2);	
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hLifetimeErr->GetXaxis()->SetTimeDisplay(1);
-	hLifetimeErr->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hLifetimeErr->Draw("colz");
-	hLifetimeErr->GetXaxis()->SetLabelOffset(0.028);
-	hLifetimeErr->GetYaxis()->SetTitleOffset(1.1);
-	hLifetimeErr->GetZaxis()->SetTitleOffset(1.55);
-	hLifetimeErr->GetXaxis()->SetNdivisions(-505);
-	hLifetimeErr->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cLifetime->SaveAs("Lifetime.pdf");
-
-	TCanvas *cTotEff = new TCanvas("cTotEff","TotEff",2000,900);
-	cTotEff->Divide(2,1);
-	cTotEff->cd(1);	
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hTotEff->GetXaxis()->SetTimeDisplay(1);
-	hTotEff->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hTotEff->Draw("colz");
-	hTotEff->GetXaxis()->SetLabelOffset(0.028);
-	hTotEff->GetYaxis()->SetTitleOffset(1.1);
-	hTotEff->GetZaxis()->SetTitleOffset(1.55);
-	hTotEff->GetXaxis()->SetNdivisions(-505);
-	hTotEff->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cTotEff->cd(2);	
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hTotEffErr->GetXaxis()->SetTimeDisplay(1);
-	hTotEffErr->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hTotEffErr->Draw("colz");
-	hTotEffErr->GetXaxis()->SetLabelOffset(0.028);
-	hTotEffErr->GetYaxis()->SetTitleOffset(1.1);
-	hTotEffErr->GetZaxis()->SetTitleOffset(1.55);
-	hTotEffErr->GetXaxis()->SetNdivisions(-505);
-	hTotEffErr->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cTotEff->SaveAs("TotEff.pdf");
-
-	TCanvas *cPoMean = new TCanvas("cPoMean","PoMean",1000,450);
-	gPad->SetRightMargin(0.16);
-	gPad->SetBottomMargin(0.12);
-	hPoMean->GetXaxis()->SetTimeDisplay(1);
-	hPoMean->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	hPoMean->Draw("colz");
-	hPoMean->GetXaxis()->SetLabelOffset(0.028);
-	hPoMean->GetYaxis()->SetTitleOffset(1.1);
-	hPoMean->GetZaxis()->SetTitleOffset(1.55);
-	hPoMean->GetXaxis()->SetNdivisions(-505);
-	hPoMean->GetYaxis()->SetNdivisions(-numCellDivisions);
-	cPoMean->SaveAs("PoMean.pdf");
-
-*/
 	//--------------------------------------------------------------------------
 	//Plot Graphs
 
@@ -1532,8 +1401,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
-	cRateRow0_1->SaveAs(Form("%s/RatePerCell_Row0and1.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
 
 	TCanvas *cRateRow2_3 = new TCanvas("cRateRow2_3","Rate Row 2-3",1800,1800);
 	cRateRow2_3->Divide(1,2);
@@ -1606,9 +1473,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
-	cRateRow2_3->SaveAs(Form("%s/RatePerCell_Row2and3.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
-
 	TCanvas *cRateRow4_5 = new TCanvas("cRateRow4_5","Rate Row 4-5",1800,1800);
 	cRateRow4_5->Divide(1,2);
 
@@ -1679,9 +1543,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
 	}
 	leg->Draw();
-
-	cRateRow4_5->SaveAs(Form("%s/RatePerCell_Row4and5.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
 
 	TCanvas *cRateRow6_7 = new TCanvas("cRateRow6_7","Rate Row 6-7",1800,1800);
 	cRateRow6_7->Divide(1,2);
@@ -1754,9 +1615,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
-	cRateRow6_7->SaveAs(Form("%s/RatePerCell_Row6and7.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
-
 	TCanvas *cRateRow8_9 = new TCanvas("cRateRow8_9","Rate Row 8-9",1800,1800);
 	cRateRow8_9->Divide(1,2);
 
@@ -1828,9 +1686,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
-	cRateRow8_9->SaveAs(Form("%s/RatePerCell_Row8and9.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
-
 	TCanvas *cRateRow10 = new TCanvas("cRateRow10","Rate Row 10",1800,900);
 	cellIdx = cellIdx + 14;
 	styleIdx = 0;
@@ -1864,8 +1719,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
 	}
 	leg->Draw();
-
-	cRateRow10->SaveAs(Form("%s/RatePerCell_Row10.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	//--------------------------------------------------------------------------
 	cellIdx = 0;
@@ -1944,9 +1797,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
-	cRateCol0_1->SaveAs(Form("%s/RatePerCell_Col0and1.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
-
 	TCanvas *cRateCol2_3 = new TCanvas("cRateCol2_3","Rate Column 2-3",3600,1200);
 	cRateCol2_3->Divide(2,1);
 
@@ -2021,9 +1871,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		i = i + 14;
 	}
 	leg->Draw();
-
-	cRateCol2_3->SaveAs(Form("%s/RatePerCell_Col2and3.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
 
 	TCanvas *cRateCol4_5 = new TCanvas("cRateCol4_5","Rate Column 4-5",3600,1200);
 	cRateCol4_5->Divide(2,1);
@@ -2100,9 +1947,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
-	cRateCol4_5->SaveAs(Form("%s/RatePerCell_Col4and5.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
-
 	TCanvas *cRateCol6_7 = new TCanvas("cRateCol6_7","Rate Column 6-7",3600,1200);
 	cRateCol6_7->Divide(2,1);
 
@@ -2177,9 +2021,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		i = i + 14;
 	}
 	leg->Draw();
-
-	cRateCol6_7->SaveAs(Form("%s/RatePerCell_Col6and7.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
 
 	TCanvas *cRateCol8_9 = new TCanvas("cRateCol8_9","Rate Column 8-9",3600,1200);
 	cRateCol8_9->Divide(2,1);
@@ -2256,9 +2097,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
-	cRateCol8_9->SaveAs(Form("%s/RatePerCell_Col8and9.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
-
 	TCanvas *cRateCol10_11 = new TCanvas("cRateCol10_11","Rate Column 10-11",3600,1200);
 	cRateCol10_11->Divide(2,1);
 
@@ -2333,9 +2171,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		i = i + 14;
 	}
 	leg->Draw();
-
-	cRateCol10_11->SaveAs(Form("%s/RatePerCell_Col10and11.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
 
 	TCanvas *cRateCol12_13 = new TCanvas("cRateCol12_13","Rate Column 12-13",3600,1200);
 	cRateCol12_13->Divide(2,1);
@@ -2412,6 +2247,20 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	}
 	leg->Draw();
 
+	//=========================================================================================================
+	if(PLOTFLAG==1){
+	cRateRow0_1->SaveAs(Form("%s/RatePerCell_Row0and1.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateRow2_3->SaveAs(Form("%s/RatePerCell_Row2and3.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateRow4_5->SaveAs(Form("%s/RatePerCell_Row4and5.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateRow6_7->SaveAs(Form("%s/RatePerCell_Row6and7.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateRow8_9->SaveAs(Form("%s/RatePerCell_Row8and9.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateRow10->SaveAs(Form("%s/RatePerCell_Row10.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateCol0_1->SaveAs(Form("%s/RatePerCell_Col0and1.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateCol2_3->SaveAs(Form("%s/RatePerCell_Col2and3.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateCol4_5->SaveAs(Form("%s/RatePerCell_Col4and5.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateCol6_7->SaveAs(Form("%s/RatePerCell_Col6and7.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateCol8_9->SaveAs(Form("%s/RatePerCell_Col8and9.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	cRateCol10_11->SaveAs(Form("%s/RatePerCell_Col10and11.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 	cRateCol12_13->SaveAs(Form("%s/RatePerCell_Col12and13.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
+	}
 }
