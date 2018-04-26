@@ -26,7 +26,7 @@
 
 using namespace std;
 
-tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(string TreeDir, const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG){
+tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(string TreeDir, const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG){
 
 	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
 	bool exclude;
@@ -89,7 +89,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		vNull.push_back(0.0);
 		vector<vector<double>> vvNull;
 		vvNull.push_back(vNull); 
-		return make_tuple(IDX, ts, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
+		return make_tuple(IDX, ts, 
+			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, 
+			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
 	}
 	else if((IDX+1)>=nAcEvents){ 
 		printf("FINISHED ANALYSIS! :D \n");
@@ -99,7 +101,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		vNull.push_back(0.0);
 		vector<vector<double>> vvNull;
 		vvNull.push_back(vNull); 
-		return make_tuple(IDX, ts, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
+		return make_tuple(IDX, ts, 
+			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, 
+			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
 	}
 
 //===============================================================
@@ -360,14 +364,23 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 
 	double par[6];
 
-	double rate,    N,    lifetime,    promptPSDEff,    delayPSDEff,     promptEnEff,    delayEnEff,    posEff,    totEff,    PoMean, 	 PoPSDMean, RnPoDzMean, PoPosSigma;
-	double rateErr, NErr, lifetimeErr, promptPSDEffErr, delayPSDEffErr,  promptEnEffErr, delayEnEffErr, posEffErr, totEffErr, PoMeanErr, PoPSDMeanErr, RnPoDzMeanErr, PoPosSigmaErr;
+	double rate,    N,    lifetime,    promptPSDEff,    delayPSDEff,     promptEnEff,    delayEnEff,    posEff,    totEff;
+	double rateErr, NErr, lifetimeErr, promptPSDEffErr, delayPSDEffErr,  promptEnEffErr, delayEnEffErr, posEffErr, totEffErr;
 
-	vector<double> vRate,    vN,    vLifetime,    vPromptPSDEff,    vDelayPSDEff,    vPromptEnEff,    vDelayEnEff,    vPosEff,    vTotEff,   vPoMean, vPoPSDMean, vRnPoDzMean, vPoPosSigma;
-	vector<double> vRateErr, vNErr, vLifetimeErr, vPromptPSDEffErr, vDelayPSDEffErr, vPromptEnEffErr, vDelayEnEffErr, vPosEffErr, vTotEffErr, vPoMeanErr, vPoPSDMeanErr, vRnPoDzMeanErr, vPoPosSigmaErr; 
+	double PoEnMean, 	PoEnSigma,    RnPSDMean,    PoPSDMean,    RnPoDzMean,    RnPoDzSigma,    PoPosSigma;
+	double PoEnMeanErr, PoEnSigmaErr, RnPSDMeanErr, PoPSDMeanErr, RnPoDzMeanErr, RnPoDzSigmaErr, PoPosSigmaErr;
 
-	double rateAllCells,    NAllCells,    lifetimeAllCells,    promptPSDEffAllCells,    delayPSDEffAllCells,     promptEnEffAllCells,    delayEnEffAllCells,    posEffAllCells,    totEffAllCells,    PoMeanAllCells, PoPSDMeanAllCells, RnPoDzMeanAllCells, PoPosSigmaAllCells;
-	double rateErrAllCells, NErrAllCells, lifetimeErrAllCells, promptPSDEffErrAllCells, delayPSDEffErrAllCells,  promptEnEffErrAllCells, delayEnEffErrAllCells, posEffErrAllCells, totEffErrAllCells, PoMeanErrAllCells, PoPSDMeanErrAllCells, RnPoDzMeanErrAllCells, PoPosSigmaErrAllCells;
+	vector<double> vRate,    vN,    vLifetime,    vPromptPSDEff,    vDelayPSDEff,    vPromptEnEff,    vDelayEnEff,    vPosEff,    vTotEff;
+	vector<double> vRateErr, vNErr, vLifetimeErr, vPromptPSDEffErr, vDelayPSDEffErr, vPromptEnEffErr, vDelayEnEffErr, vPosEffErr, vTotEffErr; 
+
+	vector<double> vPoEnMean,    vPoEnSigma,    vRnPSDMean,    vPoPSDMean,    vRnPoDzMean,    vRnPoDzSigma,    vPoPosSigma;
+	vector<double> vPoEnMeanErr, vPoEnSigmaErr, vRnPSDMeanErr, vPoPSDMeanErr, vRnPoDzMeanErr, vRnPoDzSigmaErr, vPoPosSigmaErr;
+
+	double rateAllCells,    NAllCells,    lifetimeAllCells,    promptPSDEffAllCells,    delayPSDEffAllCells,     promptEnEffAllCells,    delayEnEffAllCells,    posEffAllCells,    totEffAllCells;
+	double rateErrAllCells, NErrAllCells, lifetimeErrAllCells, promptPSDEffErrAllCells, delayPSDEffErrAllCells,  promptEnEffErrAllCells, delayEnEffErrAllCells, posEffErrAllCells, totEffErrAllCells;
+
+	double PoEnMeanAllCells,    PoEnSigmaAllCells,    RnPSDMeanAllCells,    PoPSDMeanAllCells,    RnPoDzMeanAllCells,    RnPoDzSigmaAllCells,    PoPosSigmaAllCells;
+	double PoEnMeanErrAllCells, PoEnSigmaErrAllCells, RnPSDMeanErrAllCells, PoPSDMeanErrAllCells, RnPoDzMeanErrAllCells, RnPoDzSigmaErrAllCells, PoPosSigmaErrAllCells;
 
 //===============================================================
 
@@ -375,8 +388,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	printf("Subtracting histograms \n");
 
 	for(int i=0;i<NUMCELLS;i++){		
-		rate = 0.0,    N = 0.0,    lifetime = 0.0,    promptPSDEff = 0.0,    delayPSDEff = 0.0,     promptEnEff = 0.0,    delayEnEff = 0.0,    posEff = 0.0,    totEff = 0.0,    PoMean = 0.0, PoPSDMean = 0.0;
-		rateErr = 0.0, NErr = 0.0, lifetimeErr = 0.0, promptPSDEffErr = 0.0, delayPSDEffErr = 0.0,  promptEnEffErr = 0.0, delayEnEffErr = 0.0, posEffErr = 0.0, totEffErr = 0.0, PoMeanErr = 0.0, PoPSDMeanErr = 0.0;
+		rate = 0.0,    N = 0.0,    lifetime = 0.0,    promptPSDEff = 0.0,    delayPSDEff = 0.0,     promptEnEff = 0.0,    delayEnEff = 0.0,    posEff = 0.0,    totEff = 0.0,    PoEnMean = 0.0, PoPSDMean = 0.0;
+		rateErr = 0.0, NErr = 0.0, lifetimeErr = 0.0, promptPSDEffErr = 0.0, delayPSDEffErr = 0.0,  promptEnEffErr = 0.0, delayEnEffErr = 0.0, posEffErr = 0.0, totEffErr = 0.0, PoEnMeanErr = 0.0, PoPSDMeanErr = 0.0;
 
 		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
 		if(!exclude){
@@ -491,9 +504,6 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		hPoPos->Sumw2();
 		hPoPos->Add(vhBGDelayPos[i],-1);	
 
-		PoPosSigma = hPoPos->GetRMS();
-		PoPosSigmaErr = hPoPos->GetRMSError();
-
 		//--------------------------------------------------------------------------
 		//Calculate efficiencies and Ac227 rate
 
@@ -521,16 +531,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		totEff = promptPSDEff*delayPSDEff*promptEnEff*delayEnEff*posEff;
 		totEffErr = totEff*sqrt(pow(promptPSDEffErr/promptPSDEff,2) + pow(delayPSDEffErr/delayPSDEff,2) + pow(promptEnEffErr/promptEnEff,2) + pow(delayEnEffErr/delayEnEff,2) + pow(posEffErr/posEff,2)); 
 
-		PoMean = fDelayEGaus->GetParameter(1);
-		PoMeanErr = fDelayEGaus->GetParError(1);
-
-		PoPSDMean = fDelayPSDGaus->GetParameter(1);
-		PoPSDMeanErr = fDelayPSDGaus->GetParError(1);
-
-		RnPoDzMean = fDzGaus->GetParameter(1);
-		RnPoDzMeanErr = fDzGaus->GetParError(1);
-
-	
+		//==================================================	
 		N = fDtExp->GetParameter(0);
 		NErr = fDtExp->GetParError(0);
 		lifetime = fDtExp->GetParameter(1);
@@ -538,6 +539,27 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 
 		rate = N/(livetime*totEff);
 		rateErr = rate*sqrt(pow(NErr/N,2) + pow(promptPSDEffErr/promptPSDEff,2) + pow(delayPSDEffErr/delayPSDEff,2) + pow(promptEnEffErr/promptEnEff,2) + pow(delayEnEffErr/delayEnEff,2) + pow(posEffErr/posEff,2)); 
+
+		PoEnMean = fDelayEGaus->GetParameter(1);
+		PoEnMeanErr = fDelayEGaus->GetParError(1);
+
+		PoEnSigma = fDelayEGaus->GetParameter(2);
+		PoEnSigmaErr = fDelayEGaus->GetParError(2);
+
+		RnPSDMean = fPromptPSDGaus->GetParameter(1);
+		RnPSDMeanErr = fPromptPSDGaus->GetParError(1);
+
+		PoPSDMean = fDelayPSDGaus->GetParameter(1);
+		PoPSDMeanErr = fDelayPSDGaus->GetParError(1);
+
+		RnPoDzMean = fDzGaus->GetParameter(1);
+		RnPoDzMeanErr = fDzGaus->GetParError(1);
+
+		RnPoDzSigma = fDzGaus->GetParameter(2);
+		RnPoDzSigmaErr = fDzGaus->GetParError(2);
+
+		PoPosSigma = hPoPos->GetRMS();
+		PoPosSigmaErr = hPoPos->GetRMSError();
 
 		//--------------------------------------------------------------------------
 		//Draw histograms
@@ -663,12 +685,12 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		leg->AddEntry(fDzGaus,"Fit","l");
 		leg->Draw();
 
-/*
+		/*
 		cRnPoDt->SaveAs(Form("Cell%i_RnPoDt_%i.pdf",i,nLoop));	
 		cRnPoPSD->SaveAs(Form("Cell%i_RnPoPSD_%i.pdf",i,nLoop));
 		cRnPoE->SaveAs(Form("Cell%i_RnPoE_%i.pdf",i,nLoop));
 		cRnPoDz->SaveAs(Form("Cell%i_RnPoDz_%i.pdf",i,nLoop));
-*/
+		*/
 
 		delete cRnPoDt;
 		delete cRnPoPSD;
@@ -694,12 +716,19 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		vPosEffErr.push_back(posEffErr);
 		vTotEff.push_back(totEff);
 		vTotEffErr.push_back(totEffErr);
-		vPoMean.push_back(PoMean);
-		vPoMeanErr.push_back(PoMeanErr);		
+
+		vPoEnMean.push_back(PoEnMean);
+		vPoEnMeanErr.push_back(PoEnMeanErr);		
+		vPoEnSigma.push_back(PoEnSigma);
+		vPoEnSigmaErr.push_back(PoEnSigmaErr);
+		vRnPSDMean.push_back(RnPSDMean);
+		vRnPSDMeanErr.push_back(RnPSDMeanErr);
 		vPoPSDMean.push_back(PoPSDMean);
 		vPoPSDMeanErr.push_back(PoPSDMeanErr);		
 		vRnPoDzMean.push_back(RnPoDzMean);
 		vRnPoDzMeanErr.push_back(RnPoDzMeanErr);
+		vRnPoDzSigma.push_back(RnPoDzSigma);
+		vRnPoDzSigma.push_back(RnPoDzSigmaErr);
 		vPoPosSigma.push_back(PoPosSigma);
 		vPoPosSigmaErr.push_back(PoPosSigmaErr);
 
@@ -811,9 +840,6 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	hPoPos_AllCells->Sumw2();
 	hPoPos_AllCells->Add(hBGDelayPos_AllCells,-1);	
 
-	PoPosSigmaAllCells = hPoPos_AllCells->GetRMS();
-	PoPosSigmaErrAllCells = hPoPos_AllCells->GetRMSError();
-
 	//--------------------------------------------------------------------------
 	//Calculate efficiencies and Ac227 rate
 
@@ -840,15 +866,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	totEffAllCells = promptPSDEffAllCells*delayPSDEffAllCells*promptEnEffAllCells*delayEnEffAllCells*posEffAllCells;
 	totEffErrAllCells = totEff*sqrt(pow(promptPSDEffErrAllCells/promptPSDEffAllCells,2) + pow(delayPSDEffErrAllCells/delayPSDEffAllCells,2) + pow(promptEnEffErrAllCells/promptEnEffAllCells,2) + pow(delayEnEffErrAllCells/delayEnEffAllCells,2) + pow(posEffErrAllCells/posEffAllCells,2)); 
 
-	PoMeanAllCells = fDelayEGaus->GetParameter(1);
-	PoMeanErrAllCells = fDelayEGaus->GetParError(1);
-
-	PoPSDMeanAllCells = fDelayPSDGaus->GetParameter(1);
-	PoPSDMeanErrAllCells = fDelayPSDGaus->GetParError(1);
-
-	RnPoDzMeanAllCells = fDzGaus->GetParameter(1);
-	RnPoDzMeanErrAllCells = fDzGaus->GetParError(1);
-
+	//==================================================	
 	NAllCells = fDtExp->GetParameter(0);
 	NErrAllCells = fDtExp->GetParError(0);
 	lifetimeAllCells = fDtExp->GetParameter(1);
@@ -856,6 +874,28 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 
 	rateAllCells = NAllCells/(livetime*totEffAllCells);
 	rateErrAllCells = rateAllCells*sqrt(pow(NErrAllCells/NAllCells,2) + pow(promptPSDEffErrAllCells/promptPSDEffAllCells,2) + pow(delayPSDEffErrAllCells/delayPSDEffAllCells,2) + pow(promptEnEffErrAllCells/promptEnEffAllCells,2) + pow(delayEnEffErrAllCells/delayEnEffAllCells,2) + pow(posEffErrAllCells/posEffAllCells,2)); 
+
+	PoEnMeanAllCells = fDelayEGaus->GetParameter(1);
+	PoEnMeanErrAllCells = fDelayEGaus->GetParError(1);
+
+	PoEnSigmaAllCells = fDelayEGaus->GetParameter(2);
+	PoEnSigmaErrAllCells = fDelayEGaus->GetParError(2);
+
+	RnPSDMeanAllCells = fPromptPSDGaus->GetParameter(2);
+	RnPSDMeanErrAllCells = fPromptPSDGaus->GetParError(2);	
+
+	PoPSDMeanAllCells = fDelayPSDGaus->GetParameter(1);
+	PoPSDMeanErrAllCells = fDelayPSDGaus->GetParError(1);
+
+	RnPoDzMeanAllCells = fDzGaus->GetParameter(1);
+	RnPoDzMeanErrAllCells = fDzGaus->GetParError(1);
+
+	RnPoDzSigmaAllCells = fDzGaus->GetParameter(2);
+	RnPoDzSigmaErrAllCells = fDzGaus->GetParError(2);
+
+	PoPosSigmaAllCells = hPoPos_AllCells->GetRMS();
+	PoPosSigmaErrAllCells = hPoPos_AllCells->GetRMSError();
+
 
 	printf("==================================================================================\n");
 	printf("RATE TOTAL DETECTOR: %f +/- %f Hz\n",rateAllCells*1000,rateErrAllCells*1000);
@@ -881,16 +921,23 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	vPosEffErr.push_back(posEffErrAllCells);
 	vTotEff.push_back(totEffAllCells);
 	vTotEffErr.push_back(totEffErrAllCells);
-	vPoMean.push_back(PoMeanAllCells);
-	vPoMeanErr.push_back(PoMeanErrAllCells);		
+
+	vPoEnMean.push_back(PoEnMeanAllCells);
+	vPoEnMeanErr.push_back(PoEnMeanErrAllCells);		
+	vPoEnSigma.push_back(PoEnSigmaAllCells);
+	vPoEnSigmaErr.push_back(PoEnSigmaErrAllCells);
+	vRnPSDMean.push_back(RnPSDMeanAllCells);
+	vRnPSDMeanErr.push_back(RnPSDMeanErrAllCells);
 	vPoPSDMean.push_back(PoPSDMeanAllCells);
 	vPoPSDMeanErr.push_back(PoPSDMeanErrAllCells);		
 	vRnPoDzMean.push_back(RnPoDzMeanAllCells);
 	vRnPoDzMeanErr.push_back(RnPoDzMeanErrAllCells);
+	vRnPoDzSigma.push_back(RnPoDzSigmaAllCells);
+	vRnPoDzSigmaErr.push_back(RnPoDzSigmaErrAllCells);
 	vPoPosSigma.push_back(PoPosSigmaAllCells);
 	vPoPosSigmaErr.push_back(PoPosSigmaErrAllCells);
 
-	if(PLOTFLAG==1 || PLOTFLAG==2){
+	if(PLOTFLAG==1){
 
 	//--------------------------------------------------------------------------
 	//Plot histograms
@@ -1093,7 +1140,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	printf("================================================================================================= \n");
 	outFile->Write();
 
-	vector<vector<double>> vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff, vvPoMean, vvPoPSDMean, vvRnPoDzMean, vvPoPosSigma;
+	vector<vector<double>> vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff;
+	vector<vector<double>> vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosSigma;
+
 	vvRate.push_back(vRate);
 	vvRate.push_back(vRateErr);
 	vvN.push_back(vN);
@@ -1112,16 +1161,23 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	vvPosEff.push_back(vPosEffErr);
 	vvTotEff.push_back(vTotEff);
 	vvTotEff.push_back(vTotEffErr);
-	vvPoMean.push_back(vPoMean);
-	vvPoMean.push_back(vPoMeanErr);
+
+	vvPoEnMean.push_back(vPoEnMean);
+	vvPoEnMean.push_back(vPoEnMeanErr);
+	vvPoEnSigma.push_back(vPoEnSigma);
+	vvPoEnSigma.push_back(vPoEnSigmaErr);
+	vvRnPSDMean.push_back(vRnPSDMean);
+	vvRnPSDMean.push_back(vRnPSDMeanErr);
 	vvPoPSDMean.push_back(vPoPSDMean);
 	vvPoPSDMean.push_back(vPoPSDMeanErr);
 	vvRnPoDzMean.push_back(vRnPoDzMean);
 	vvRnPoDzMean.push_back(vRnPoDzMeanErr);
+	vvRnPoDzSigma.push_back(vRnPoDzSigma);
+	vvRnPoDzSigma.push_back(vRnPoDzSigmaErr);
 	vvPoPosSigma.push_back(vPoPosSigma);	
 	vvPoPosSigma.push_back(vPoPosSigmaErr);	
 
-	return make_tuple(IDX, tstamp, vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff, vvPoMean, vvPoPSDMean, vvRnPoDzMean, vvPoPosSigma);
+	return make_tuple(IDX, tstamp, vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff, vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosSigma);
 }
 
 void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG){
@@ -1196,7 +1252,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	TGraphErrors *grN_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grLifetime_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grTotEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
-	TGraphErrors *grPoMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grPoEnMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoPSDMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grRnPoDzMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoPosSigma_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
@@ -1209,7 +1265,8 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 
 	//--------------------------------------------------------------------------
 	//Fill histograms
-	vector<vector<double>> vRate, vN, vLifetime, vTotEff, vPoMean, vPoPSDMean, vRnPoDzMean, vPoPosSigma;
+	vector<vector<double>> vRate, vN, vLifetime, vPSDEff, vEnEff, vPosEff, vTotEff;
+	vector<vector<double>> vPoEnMean, vPoEnSigma, vRnPSDMean, vPoPSDMean, vRnPoDzMean, vRnPoDzSigma, vPoPosSigma;
 	double tstamp;
 
 	int n=1;
@@ -1218,29 +1275,28 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		TH1F* hN = new TH1F("hN","N;N [arb];Counts",hNumBins,6300,7000);
 		TH1F* hLifetime = new TH1F("hLifetime","Lifetime;#tau [ms];Counts",hNumBins,2.3,2.9);
 		TH1F* hTotEff = new TH1F("hTotEff","Total Efficiency;Efficiency;Counts",hNumBins,0.94,1.0);
-		TH1F* hPoMeanPerCell = new TH1F("hPoMeanPerCell","Po Energy Mean Per Cell;Energy [MeVee];Counts",hNumBins,0.79,0.83);
+		TH1F* hPoEnMeanPerCell = new TH1F("hPoEnMeanPerCell","Po Energy Mean Per Cell;Energy [MeVee];Counts",hNumBins,0.79,0.83);
 		TH1F* hDzMeanPerCell = new TH1F("hDzMeanPerCell","Dz Mean Per Cell;#Deltaz [mm];Counts",hNumBins,-5,5);
 		
-		vRate.clear();
-		vN.clear();
-		vLifetime.clear();
-		vTotEff.clear();
-		vPoMean.clear();
-		vPoPSDMean.clear();
-		vRnPoDzMean.clear();
-		vPoPosSigma.clear();
-
 		auto results = ReadAc227Trees(TreeDir, NUMCELLS, IDX, NUMTREES, n-1, PLOTFLAG);
-		IDX 	  = get<0>(results);
-		tstamp    = get<1>(results);
-		vRate 	  = get<2>(results);
-		vN        = get<3>(results);
-		vLifetime = get<4>(results);
-		vTotEff   = get<8>(results);
-		vPoMean   = get<9>(results);	
-		vPoPSDMean  = get<10>(results);	
-		vRnPoDzMean = get<11>(results);
-		vPoPosSigma = get<12>(results);
+		IDX 	  	 = get<0>(results);
+		tstamp    	 = get<1>(results);
+
+		vRate 	  	 = get<2>(results);
+		vN        	 = get<3>(results);
+		vLifetime    = get<4>(results);
+		vPSDEff      = get<5>(results);
+		vEnEff       = get<6>(results);
+		vPosEff      = get<7>(results);
+		vTotEff      = get<8>(results);
+
+		vPoEnMean    = get<9>(results);	
+		vPoEnSigma   = get<10>(results);
+		vRnPSDMean   = get<11>(results);
+		vPoPSDMean   = get<12>(results);	
+		vRnPoDzMean  = get<13>(results);
+		vRnPoDzSigma = get<14>(results);
+		vPoPosSigma  = get<15>(results);
 
 		if(IDX<0) break;
 
@@ -1258,7 +1314,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 			hN->Fill(vN[0][i]);
 			hLifetime->Fill(vLifetime[0][i]);
 			hTotEff->Fill(vTotEff[0][i]);
-			hPoMeanPerCell->Fill(vPoMean[0][i]);
+			hPoEnMeanPerCell->Fill(vPoEnMean[0][i]);
 			hDzMeanPerCell->Fill(vRnPoDzMean[0][i]);
 	
 			int binx = i%14 + 1;
@@ -1293,10 +1349,10 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		hTotEff->Draw();
 		cTotEff->SaveAs(Form("%s/HistTotEffPerCell_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),n-1));
 
-		TCanvas *cPoMeanPerCell = new TCanvas("cPoMeanPerCell","Po Energy Mean Per Cell",1);
-		hPoMeanPerCell->Draw();
-		hPoMeanPerCell->Fit("gaus");
-		cPoMeanPerCell->SaveAs(Form("%s/HistPoEnergyMeanPerCell_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),n-1));
+		TCanvas *cPoEnMeanPerCell = new TCanvas("cPoEnMeanPerCell","Po Energy Mean Per Cell",1);
+		hPoEnMeanPerCell->Draw();
+		hPoEnMeanPerCell->Fit("gaus");
+		cPoEnMeanPerCell->SaveAs(Form("%s/HistPoEnergyMeanPerCell_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),n-1));
 
 		TCanvas *cDzMeanPerCell = new TCanvas("cDzMeanPerCell","Po Energy Mean Per Cell",1);
 		hDzMeanPerCell->Draw();
@@ -1305,7 +1361,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 
 		gStyle->SetPaintTextFormat("2.2f");
 		gStyle->SetOptStat(0);
-		gStyle->SetPalette(kTemperatureMap);
 		TCanvas *cRatePerCell = new TCanvas("cRatePerCell","Rate per Cell",1);
 		gPad->SetRightMargin(0.16);
 		hRatePerCell->SetMinimum(3.0);
@@ -1322,7 +1377,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		delete cN;
 		delete cLifetime;
 		delete cTotEff;
-		delete cPoMeanPerCell;
+		delete cPoEnMeanPerCell;
 		delete cRatePerCell;
 		delete cRelRatePerCell;
 		delete cDzMeanPerCell;
@@ -1331,7 +1386,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		delete hN;
 		delete hLifetime;
 		delete hTotEff;
-		delete hPoMeanPerCell;
+		delete hPoEnMeanPerCell;
 		delete hDzMeanPerCell;
 		}
 
@@ -1348,8 +1403,8 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		grTotEff_AllCells->SetPoint(pt,tstamp,vTotEff[0][NUMCELLS]);
 		grTotEff_AllCells->SetPointError(pt,0,vTotEff[1][NUMCELLS]);	
 	
-		grPoMean_AllCells->SetPoint(pt,tstamp,vPoMean[0][NUMCELLS]);
-		grPoMean_AllCells->SetPointError(pt,0,vPoMean[1][NUMCELLS]);	
+		grPoEnMean_AllCells->SetPoint(pt,tstamp,vPoEnMean[0][NUMCELLS]);
+		grPoEnMean_AllCells->SetPointError(pt,0,vPoEnMean[1][NUMCELLS]);	
 
 		grPoPSDMean_AllCells->SetPoint(pt,tstamp,vPoPSDMean[0][NUMCELLS]);
 		grPoPSDMean_AllCells->SetPointError(pt,0,vPoPSDMean[1][NUMCELLS]);	
@@ -1363,11 +1418,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		n = n + 1;
 	}
 
-	//--------------------------------------------------------------------------
-	//Plot Histograms
-	gStyle->SetPalette(kTemperatureMap);
 
-	int numCellDivisions = (NUMCELLS/11) + 100*2 + 10000*0;
 	//--------------------------------------------------------------------------
 	//Plot Graphs
 	if(PLOTFLAG==2){
@@ -1425,18 +1476,19 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	grTotEff_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
 	cTotEffAllCells->SaveAs(Form("%s/TotEff_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
-	TCanvas *cPoMeanAllCells = new TCanvas("cPoMeanAllCells","Po Mean All Cells",1);
-	grPoMean_AllCells->SetTitle("Total Po-215 Mean of Detector");
-	grPoMean_AllCells->GetYaxis()->SetTitle("Energy [MeVee]");
-	grPoMean_AllCells->GetXaxis()->SetLabelOffset(0.028);
-	grPoMean_AllCells->SetMarkerStyle(20);
-	grPoMean_AllCells->SetMarkerColor(kBlue);
-	grPoMean_AllCells->SetLineColor(kBlue);
-	grPoMean_AllCells->Draw("AP");
-	grPoMean_AllCells->Fit("pol0");
-	grPoMean_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grPoMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	cPoMeanAllCells->SaveAs(Form("%s/PoMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+	TCanvas *cPoEnMeanAllCells = new TCanvas("cPoEnMeanAllCells","Po Mean All Cells",1);
+	grPoEnMean_AllCells->SetTitle("Total Po-215 Mean of Detector");
+	grPoEnMean_AllCells->GetYaxis()->SetTitle("Energy [MeVee]");
+	grPoEnMean_AllCells->GetXaxis()->SetLabelOffset(0.028);
+	grPoEnMean_AllCells->GetYaxis()->SetTitleOffset(1.43);
+	grPoEnMean_AllCells->SetMarkerStyle(20);
+	grPoEnMean_AllCells->SetMarkerColor(kBlue);
+	grPoEnMean_AllCells->SetLineColor(kBlue);
+	grPoEnMean_AllCells->Draw("AP");
+	grPoEnMean_AllCells->Fit("pol1");
+	grPoEnMean_AllCells->GetXaxis()->SetTimeDisplay(1);
+	grPoEnMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	cPoEnMeanAllCells->SaveAs(Form("%s/PoEnMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoPSDMeanAllCells = new TCanvas("cPoPSDMeanAllCells","Po PSD Mean All Cells",1);
 	grPoPSDMean_AllCells->SetTitle("Total Po-215 PSD Mean of Detector");
@@ -1459,7 +1511,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	grRnPoDzMean_AllCells->SetMarkerColor(kBlue);
 	grRnPoDzMean_AllCells->SetLineColor(kBlue);
 	grRnPoDzMean_AllCells->Draw("AP");
-	grRnPoDzMean_AllCells->Fit("pol0");
+	grRnPoDzMean_AllCells->Fit("pol1");
 	grRnPoDzMean_AllCells->GetXaxis()->SetTimeDisplay(1);
 	grRnPoDzMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
 	cRnPoDzMeanAllCells->SaveAs(Form("%s/RnPoDzMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
@@ -1478,991 +1530,4 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	cPoPosSigmaAllCells->SaveAs(Form("%s/PoPosSigma_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 	}
 	
-	//--------------------------------------------------------------------------
-	//Plot rate per cell by row and column
-		
-	vector<int> vColor;
-	vColor.push_back(1);
-	vColor.push_back(2);
-	vColor.push_back(3);
-	vColor.push_back(4);
-	vColor.push_back(41);
-	vColor.push_back(6);
-	vColor.push_back(7);
-	vColor.push_back(1);
-	vColor.push_back(2);
-	vColor.push_back(3);
-	vColor.push_back(4);
-	vColor.push_back(41);
-	vColor.push_back(6);
-	vColor.push_back(7);
-
-	vector<int> vMarker;
-	vMarker.push_back(20);
-	vMarker.push_back(20);
-	vMarker.push_back(20);
-	vMarker.push_back(20);
-	vMarker.push_back(20);
-	vMarker.push_back(20);
-	vMarker.push_back(20);
-	vMarker.push_back(22);
-	vMarker.push_back(22);
-	vMarker.push_back(22);
-	vMarker.push_back(22);
-	vMarker.push_back(22);
-	vMarker.push_back(22);
-	vMarker.push_back(22);
-
-	vector<int> vLine;
-	vLine.push_back(1);
-	vLine.push_back(1);
-	vLine.push_back(1);
-	vLine.push_back(1);
-	vLine.push_back(1);
-	vLine.push_back(1);
-	vLine.push_back(1);
-	vLine.push_back(9);
-	vLine.push_back(9);
-	vLine.push_back(9);
-	vLine.push_back(9);
-	vLine.push_back(9);
-	vLine.push_back(9);
-	vLine.push_back(9);
-
-	double minRate = 2, maxRate = 3.5;
-	int cellIdx = 0;
-	double markerSize = 2.0;
-
-	TCanvas *cRateRow0_1 = new TCanvas("cRateRow0_1","Rate Row 0-1",1800,1800);
-	cRateRow0_1->Divide(1,2);
-
-	cRateRow0_1->cd(2);
-	gPad->SetRightMargin(0.2);
-	int styleIdx = 0;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 0;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	TLegend *leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	cRateRow0_1->cd(1);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 1;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-
-	TCanvas *cRateRow2_3 = new TCanvas("cRateRow2_3","Rate Row 2-3",1800,1800);
-	cRateRow2_3->Divide(1,2);
-
-	cRateRow2_3->cd(2);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 2;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	cRateRow2_3->cd(1);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 3;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	TCanvas *cRateRow4_5 = new TCanvas("cRateRow4_5","Rate Row 4-5",1800,1800);
-	cRateRow4_5->Divide(1,2);
-
-	cRateRow4_5->cd(2);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 4;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	cRateRow4_5->cd(1);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 5;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	TCanvas *cRateRow6_7 = new TCanvas("cRateRow6_7","Rate Row 6-7",1800,1800);
-	cRateRow6_7->Divide(1,2);
-
-	cRateRow6_7->cd(2);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 6;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	cRateRow6_7->cd(1);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 7;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	TCanvas *cRateRow8_9 = new TCanvas("cRateRow8_9","Rate Row 8-9",1800,1800);
-	cRateRow8_9->Divide(1,2);
-
-	cRateRow8_9->cd(2);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 8;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	cRateRow8_9->cd(1);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 9;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	TCanvas *cRateRow10 = new TCanvas("cRateRow10","Rate Row 10",1800,900);
-	cellIdx = cellIdx + 14;
-	styleIdx = 0;
-	gPad->SetRightMargin(0.2);
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Row 10;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(2);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	for(int i=cellIdx+1;i<cellIdx+14;i++){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(2);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateRow0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-	}
-	leg->Draw();
-
-	//--------------------------------------------------------------------------
-	cellIdx = 0;
-
-	TCanvas *cRateCol0_1 = new TCanvas("cRateCol0_1","Rate Column 0-1",3600,1200);
-	cRateCol0_1->Divide(2,1);
-
-	cRateCol0_1->cd(1);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 0;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	int i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-	
-	cRateCol0_1->cd(2);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 1;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol0_1->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-
-	TCanvas *cRateCol2_3 = new TCanvas("cRateCol2_3","Rate Column 2-3",3600,1200);
-	cRateCol2_3->Divide(2,1);
-
-	cRateCol2_3->cd(1);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 2;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol2_3->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-	
-	cRateCol2_3->cd(2);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 3;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol2_3->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-
-	TCanvas *cRateCol4_5 = new TCanvas("cRateCol4_5","Rate Column 4-5",3600,1200);
-	cRateCol4_5->Divide(2,1);
-
-	cRateCol4_5->cd(1);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 4;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol4_5->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-	
-	cRateCol4_5->cd(2);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 5;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol4_5->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-
-	TCanvas *cRateCol6_7 = new TCanvas("cRateCol6_7","Rate Column 6-7",3600,1200);
-	cRateCol6_7->Divide(2,1);
-
-	cRateCol6_7->cd(1);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 6;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol6_7->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-	
-	cRateCol6_7->cd(2);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 7;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol6_7->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-
-	TCanvas *cRateCol8_9 = new TCanvas("cRateCol8_9","Rate Column 8-9",3600,1200);
-	cRateCol8_9->Divide(2,1);
-
-	cRateCol8_9->cd(1);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 8;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol8_9->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-	
-	cRateCol8_9->cd(2);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 9;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol8_9->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-
-	TCanvas *cRateCol10_11 = new TCanvas("cRateCol10_11","Rate Column 10-11",3600,1200);
-	cRateCol10_11->Divide(2,1);
-
-	cRateCol10_11->cd(1);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 10;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol10_11->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-	
-	cRateCol10_11->cd(2);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 11;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol10_11->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-
-	TCanvas *cRateCol12_13 = new TCanvas("cRateCol12_13","Rate Column 12-13",3600,1200);
-	cRateCol12_13->Divide(2,1);
-
-	cRateCol12_13->cd(1);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 12;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol12_13->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-	
-	cRateCol12_13->cd(2);
-	gPad->SetRightMargin(0.2);
-	styleIdx = 1;
-	cellIdx++;
-	vRateGraphs[cellIdx]->SetTitle("Rate Per Cell: Column 13;;Rate (mHz)");
-	vRateGraphs[cellIdx]->SetMarkerStyle(vMarker[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetMarkerSize(markerSize);
-	vRateGraphs[cellIdx]->SetLineColor(vColor[styleIdx]);
-	vRateGraphs[cellIdx]->SetLineWidth(1);
-	vRateGraphs[cellIdx]->SetLineStyle(vLine[styleIdx]);
-	vRateGraphs[cellIdx]->Draw("ALP");
-	vRateGraphs[cellIdx]->GetYaxis()->SetRangeUser(minRate,maxRate);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeDisplay(1);
-	vRateGraphs[cellIdx]->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
-	vRateGraphs[cellIdx]->GetXaxis()->SetLabelOffset(0.028);
-	styleIdx++;
-		
-	leg = new TLegend(0.85,0.1,1.0,0.9);
-	leg->AddEntry(vRateGraphs[cellIdx],Form("Cell %d",cellIdx),"pl");
-	i = cellIdx + 14;
-	while(i<154){
-		vRateGraphs[i]->SetMarkerStyle(vMarker[styleIdx]);
-		vRateGraphs[i]->SetMarkerColor(vColor[styleIdx]);	
-		vRateGraphs[i]->SetMarkerSize(markerSize);	
-		vRateGraphs[i]->SetLineColor(vColor[styleIdx]);
-		vRateGraphs[i]->SetLineWidth(1);
-		vRateGraphs[i]->SetLineStyle(vLine[styleIdx]);
-		vRateGraphs[i]->Draw("LP");
-		cRateCol12_13->Update();
-		styleIdx++;
-		leg->AddEntry(vRateGraphs[i],Form("Cell %d",i),"pl");
-		i = i + 14;
-	}
-	leg->Draw();
-
-	//=========================================================================================================
-	if(PLOTFLAG==3){
-	cRateRow0_1->SaveAs(Form("%s/RatePerCell_Row0and1.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateRow2_3->SaveAs(Form("%s/RatePerCell_Row2and3.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateRow4_5->SaveAs(Form("%s/RatePerCell_Row4and5.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateRow6_7->SaveAs(Form("%s/RatePerCell_Row6and7.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateRow8_9->SaveAs(Form("%s/RatePerCell_Row8and9.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateRow10->SaveAs(Form("%s/RatePerCell_Row10.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateCol0_1->SaveAs(Form("%s/RatePerCell_Col0and1.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateCol2_3->SaveAs(Form("%s/RatePerCell_Col2and3.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateCol4_5->SaveAs(Form("%s/RatePerCell_Col4and5.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateCol6_7->SaveAs(Form("%s/RatePerCell_Col6and7.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateCol8_9->SaveAs(Form("%s/RatePerCell_Col8and9.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateCol10_11->SaveAs(Form("%s/RatePerCell_Col10and11.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	cRateCol12_13->SaveAs(Form("%s/RatePerCell_Col12and13.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-	}
 }
