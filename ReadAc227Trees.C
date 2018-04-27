@@ -231,11 +231,10 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 
 	int countNumTrees = 0;
 
-	TH2F* hSelectPSDvsEn = new TH2F("hSelectPSDvsEn","Selected Events: PSD vs. Energy;Energy [MeVee];PSD [arb]",150,0.5,1.1,150,0.2,0.34);
-	TH2F* hBGPSDvsEn = new TH2F("hBGPSDvsEn","BG Events: PSD vs. Energy;Energy [MeVee];PSD [arb]",150,0.5,1.1,150,0.2,0.34);
-
-	TH2F* hSelectDelayEnVsPromptEn = new TH2F("hSelectDelayEnVsPromptEn","Selected Events: Delay vs. Prompt Energy;Energy [MeVee];Energy [MeVee]",150,0.5,1.1,150,0.5,1.1);
-	TH2F* hBGDelayEnVsPromptEn = new TH2F("hBGDelayEnVsPromptEn","BG Events: Delay vs. Prompt Energy;Energy [MeVee];Energy [MeVee]",150,0.5,1.1,150,0.5,1.1);
+	TH2F* hSelectPSDvsEn = new TH2F("hSelectPSDvsEn","Selected Events: PSD vs. Energy;Energy [MeVee];PSD [arb]",150,promptECutLow,delayECutHigh,150,promptPSDCutLow,promptPSDCutHigh);
+	TH2F* hBGPSDvsEn = new TH2F("hBGPSDvsEn","BG Events: PSD vs. Energy;Energy [MeVee];PSD [arb]",150,promptECutLow,delayECutHigh,150,promptPSDCutLow,promptPSDCutHigh);
+	TH2F* hSelectDelayEnVsPromptEn = new TH2F("hSelectDelayEnVsPromptEn","Selected Events: Delay vs. Prompt Energy;Energy [MeVee];Energy [MeVee]",150,promptECutLow,delayECutHigh,150,promptECutLow,delayECutHigh);
+	TH2F* hBGDelayEnVsPromptEn = new TH2F("hBGDelayEnVsPromptEn","BG Events: Delay vs. Prompt Energy;Energy [MeVee];Energy [MeVee]",150,promptECutLow,delayECutHigh,150,promptECutLow,delayECutHigh);
 	
 	TH1F* hRnPoSelectSeg = new TH1F("hRnPoSelectSeg","RnPo Event Segment;Segment;Counts",154,0,154);
 	TH1F* hRnPoBGSeg = new TH1F("hRnPoBGSeg","RnPo Event Segment;Segment;Counts",154,0,154);
@@ -960,6 +959,14 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	TH2F* hRnPoPSDvsEn = (TH2F*)hSelectPSDvsEn->Clone();
 	hRnPoPSDvsEn->Add(hBGPSDvsEn,-1);
 
+	TCanvas *cSelectPSDvsEn = new TCanvas("cSelectPSDvsEn","cSelectPSDvsEn",1);
+	hSelectPSDvsEn->SetTitle("Selection Events PSD vs. Energy;Energy [MeVee];PSD [arb]");
+	hSelectPSDvsEn->Draw("colz");
+
+	TCanvas *cBGPSDvsEn = new TCanvas("cBGPSDvsEn","cBGPSDvsEn",1);
+	hBGPSDvsEn->SetTitle("BG Events PSD vs. Energy;Energy [MeVee];PSD [arb]");
+	hBGPSDvsEn->Draw("colz");
+
 	TCanvas *cRnPoPSDvsEn = new TCanvas("cRnPoPSDvsEn","cRnPoPSDvsEn",1);
 	hRnPoPSDvsEn->SetTitle("RnPo PSD vs. Energy;Energy [MeVee];PSD [arb]");
 	hRnPoPSDvsEn->Draw("colz");	
@@ -967,7 +974,11 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	TH2F* hPoEnVsRnEn = (TH2F*)hSelectDelayEnVsPromptEn->Clone();
 	hPoEnVsRnEn->Add(hBGDelayEnVsPromptEn,-1);
 
-	TCanvas *cPoEnVsRnEn = new TCanvas("cPoEnVsRnEn","cPoEnVsRnEn",1);
+	TCanvas *cPoEnVsRnEn = new TCanvas("cPoEnVsRnEn","cPoEnVsRnEn",1200,1200);
+	cPoEnVsRnEn->SetRightMargin(0.13);
+	cPoEnVsRnEn->SetLeftMargin(0.13);
+	cPoEnVsRnEn->SetTopMargin(0.13);
+	cPoEnVsRnEn->SetBottomMargin(0.13);
 	hPoEnVsRnEn->SetTitle("Delay vs. Prompt Energy;Prompt Energy [MeVee];Delay Energy [MeVee]");
 	hPoEnVsRnEn->Draw("colz");
 
@@ -1111,20 +1122,29 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	hRnPoSeg->Add(hRnPoBGSeg,-1);
 
 	TCanvas *cRnPoSeg = new TCanvas("cRnPoSeg","cRnPoSeg",1);
+/*
 	hRnPoSelectSeg->SetLineColor(4);
 	hRnPoSelectSeg->SetMaximum(9000);
 	hRnPoSelectSeg->Draw();
 	hRnPoBGSeg->SetLineColor(6);
 	hRnPoBGSeg->Draw("sames");
+*/
 	hRnPoSeg->SetLineColor(1);
-	hRnPoSeg->Draw("sames");
+	//hRnPoSeg->Draw("sames");
+	hRnPoSeg->SetMaximum(9000);
+	hRnPoSeg->SetLineColor(kBlue);
+	hRnPoSeg->Draw("HIST");
 	hRnPoSeg->Fit("pol0");
+	hRnPoSeg->GetListOfFunctions()->FindObject("pol0")->Draw("same");
+/*
 	leg = new TLegend(0.78,0.40,0.98,0.55);
 	leg->AddEntry(hRnPoSelectSeg,"Selection","l");
 	leg->AddEntry(hRnPoBGSeg,"Background","l");
 	leg->AddEntry(hRnPoSeg,"RnPo","l");
 	leg->Draw();
-
+*/
+	cSelectPSDvsEn->SaveAs(Form("%s/SelectPSDvsEn_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),nLoop));	
+	cBGPSDvsEn->SaveAs(Form("%s/BGPSDvsEn_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),nLoop));	
 	cRnPoPSDvsEn->SaveAs(Form("%s/RnPoPSDvsEn_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),nLoop));	
 	cPoEnVsRnEn->SaveAs(Form("%s/PoEnVsRnEn_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),nLoop));	
 	cRnPoDtAll->SaveAs(Form("%s/AllCells_RnPoDt_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),nLoop));	
@@ -1271,7 +1291,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 
 	int NumActiveCells = NUMCELLS - 28;
 	double xPerCell[NumActiveCells], xErrPerCell[NumActiveCells];
-	vector<TGraphErrors*> vgrRatePerCell, vgrRelRatePerCell;
+	vector<TGraphErrors*> vgrRatePerCell, vgrRelRatePerCell, vgrEffPerCell;
 	vector<TGraphErrors*> vgrPoEnMeanPerCell, vgrPoEnSigmaPerCell, vgrRnPSDMeanPerCell, vgrPoPSDMeanPerCell, vgrRnPoDzMeanPerCell, vgrRnPoDzSigmaPerCell, vgrPoPosSigmaPerCell;
 	for(int i=0;i<numBins;i++){
 		TGraphErrors *grRatePerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
@@ -1279,6 +1299,9 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 
 		TGraphErrors *grRelRatePerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
 		vgrRelRatePerCell.push_back(grRelRatePerCell_new);
+
+		TGraphErrors *grEffPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
+		vgrEffPerCell.push_back(grEffPerCell_new);
 
 		TGraphErrors *grPoEnMeanPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
 		vgrPoEnMeanPerCell.push_back(grPoEnMeanPerCell_new);
@@ -1347,6 +1370,8 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 
 		int grPt = 0;
 
+		double avgRate = 3.274, avgRateErr = 0.004189;
+
 		for(int i=0;i<NUMCELLS;i++){
 
 			exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
@@ -1373,13 +1398,16 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 			vgrRatePerCell[n]->SetPoint(grPt,i,vRate[0][i]*1e6);
 			vgrRatePerCell[n]->SetPointError(grPt,0,vRate[1][i]*1e6);
 
-			relRate = vRate[0][i]/totalRate;
-			double relRateErr = relRate * sqrt(pow(vRate[1][i]/vRate[0][i],2)+pow(totalRateErr/totalRate,2)); 
+			relRate = vRate[0][i]/avgRate;
+			double relRateErr = relRate * sqrt(pow(vRate[1][i]/vRate[0][i],2)+pow(avgRateErr/avgRate,2)); 
 			vgrRelRatePerCell[n]->SetPoint(grPt,i,relRate);
 			vgrRelRatePerCell[n]->SetPointError(grPt,0,relRateErr);
 
 			vgrPoEnMeanPerCell[n]->SetPoint(grPt,i,vPoEnMean[0][i]);
 			vgrPoEnMeanPerCell[n]->SetPointError(grPt,0,vPoEnMean[1][i]);			
+
+			vgrEffPerCell[n]->SetPoint(grPt,i,vTotEff[0][i]);
+			vgrEffPerCell[n]->SetPointError(grPt,0,vTotEff[1][i]);
 
 			vgrPoEnSigmaPerCell[n]->SetPoint(grPt,i,vPoEnSigma[0][i]);
 			vgrPoEnSigmaPerCell[n]->SetPointError(grPt,0,vPoEnSigma[1][i]);
@@ -1450,7 +1478,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 
 		TCanvas *cPoEnMeanPerCell = new TCanvas("cPoEnMeanPerCell","Po Energy Mean Per Cell",1);
 		hPoEnMeanPerCell->Draw();
-		hPoEnMeanPerCell->Fit("gaus");
 		cPoEnMeanPerCell->SaveAs(Form("%s/HistPoEnergyMeanPerCell_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),n));
 
 		TCanvas *cDzMeanPerCell = new TCanvas("cDzMeanPerCell","Po Energy Mean Per Cell",1);
@@ -1606,7 +1633,8 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 
 	//==========================================================================================
 	//Plots of variables per cell
-	
+
+	if(PLOTFLAG==1){	
 	TCanvas *cRatePerCell = new TCanvas("cRatePerCell","Rate Per Cell",1);
 	vgrRatePerCell[0]->SetTitle("Rate Per Cell;Cell;Rate [mHz]");
 	vgrRatePerCell[0]->SetMarkerStyle(20);
@@ -1617,13 +1645,22 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	cRatePerCell->SaveAs(Form("%s/grRatePerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cRelRatePerCell = new TCanvas("cRelRatePerCell","Relative Rate Per Cell",1);
-	vgrRelRatePerCell[0]->SetTitle("Rate Per Cell/Total Rate;Cell;Relative Rate");
+	vgrRelRatePerCell[0]->SetTitle("Rate Per Cell/Average Rate Per Cell;Cell;Relative Rate");
 	vgrRelRatePerCell[0]->SetMarkerStyle(20);
 	vgrRelRatePerCell[0]->SetMarkerColor(kBlue);
 	vgrRelRatePerCell[0]->SetLineColor(kBlue);
 	vgrRelRatePerCell[0]->Draw("AP");
 	vgrRelRatePerCell[0]->Fit("pol0");
 	cRelRatePerCell->SaveAs(Form("%s/grRelRatePerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
+	TCanvas *cEffPerCell = new TCanvas("cEffPerCell","Efficiency Per Cell",1);
+	vgrEffPerCell[0]->SetTitle("Efficiency Per Cell;Cell;Eff");
+	vgrEffPerCell[0]->SetMarkerStyle(20);
+	vgrEffPerCell[0]->SetMarkerColor(kBlue);
+	vgrEffPerCell[0]->SetLineColor(kBlue);
+	vgrEffPerCell[0]->Draw("AP");
+	vgrEffPerCell[0]->Fit("pol0");
+	cEffPerCell->SaveAs(Form("%s/grEffPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoEnMeanPerCell = new TCanvas("cPoEnMeanPerCell","Po Energy Mean Per Cell",1);
 	vgrPoEnMeanPerCell[0]->SetTitle("Po Energy Mean Per Cell;Cell;Energy [MeVee]");
@@ -1681,6 +1718,6 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	vgrPoPosSigmaPerCell[0]->Draw("AP");
 	vgrPoPosSigmaPerCell[0]->Fit("pol0");
 	cPoPosSigmaPerCell->SaveAs(Form("%s/PoPosSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
+	}
 
 }
