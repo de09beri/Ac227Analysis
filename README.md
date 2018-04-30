@@ -1,11 +1,8 @@
 # Ac227Analysis
 
-**(1)** Set all environment variables in your personal .bashrc. *See Examples/ac227examplebashrc.txt* 
-
-	The ones that will be important are 
-
-	$P2X_PHYSDATA, the calibrated PhysPulse data that you want to analyze
-
+**(1)** Set all environment variables in your personal .bashrc. *See Examples/ac227examplebashrc.txt*  
+	The ones that will be important are   
+	$P2X_PHYSDATA, the calibrated PhysPulse data that you want to analyze  
 	$P2X_ANALYZED, where the Ac227TreePlugin results live
 
 	$AD_AC227ANALYSIS_SCRIPTS, the /AnalysisScripts directory in this repository   
