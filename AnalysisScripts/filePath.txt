@@ -1,0 +1,6 @@
+009
+/home/dberish//AD_Ac227Analysis/Data/Phys_20180409//WetCommissioning/series009/s009_f00001_ts1520123273/ADAnalyzer.root
+/home/dberish//AD_Ac227Analysis/Data/Phys_20180409//WetCommissioning/series009/s009_f00002_ts1520123622/ADAnalyzer.root
+/home/dberish//AD_Ac227Analysis/Data/Phys_20180409//WetCommissioning/series009/s009_f00003_ts1520123973/ADAnalyzer.root
+/home/dberish//AD_Ac227Analysis/Data/Phys_20180409//WetCommissioning/series009/s009_f00004_ts1520124363/ADAnalyzer.root
+/home/dberish//AD_Ac227Analysis/Data/Phys_20180409//WetCommissioning/series009/s009_f00005_ts1520124806/ADAnalyzer.root

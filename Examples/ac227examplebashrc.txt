@@ -1,0 +1,87 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# User specific aliases and functions
+
+export HOME=/home/dberish/
+
+# access to updated gcc version
+source /opt/rh/devtoolset-2/enable
+export CC=gcc
+export CXX=g++
+
+# avoid X11-based password prompt,
+# because it is annoying, especially over slow SSH connections
+export SSH_ASKPASS=
+
+# base applications install directory
+export APP_DIR=/cmn/prospect/
+export PATH=${APP_DIR}/bin/:${APP_DIR}/anaconda/bin/:$PATH
+
+# needed by P2x_Analysis build for locally-installed headers, libraries
+# including libconfig in $APP_DIR and hdf5 from anaconda
+# Compiler flags for where to find header files at compile time
+export CXXFLAGS="-I${APP_DIR}/include/ -I/${APP_DIR}/anaconda/include/ $CXXFLAGS"
+# Linker flags for where to find libraries at compile time
+export LDFLAGS="-L${APP_DIR}/lib/ -L${APP_DIR}/anaconda/lib/ $LDFLAGS"
+# LD_LIBRARY_PATH tells where to find libraries when a program runs
+export LD_LIBRARY_PATH="${APP_DIR}/lib/:${APP_DIR}/anaconda/lib/:$LD_LIBRARY_PATH"
+
+# use local ROOT6 install
+source ${APP_DIR}/root6/bin/thisroot.sh
+
+# Geant4 install
+source ${APP_DIR}/geant4.10.03.p01-build/bin/geant4.sh
+
+# for PROSPECT muon shower simulations compile and run
+export CRYHOME=${APP_DIR}/cry_v1.7/
+export CRYDATA=${CRYHOME}/data
+
+# PROSPECT analysis toolchain using BundleInstaller
+export PBUNDLE=${APP_DIR}/PROSPECT-Bundle-v11/
+export P2X_ANALYSIS_CODE=${HOME}/PROSPECT2x_Analysis/
+export LD_LIBRARY_PATH=${P2X_ANALYSIS_CODE}/miniMPM/:${LD_LIBRARY_PATH}
+
+export PG4_CODE=${HOME}/PROSPECT-G4/
+export PG4_BUILD=${HOME}/PG4_build
+export PG4_OUTDIR=${HOME}/AnalysisChallenge_Ac227/
+export LD_LIBRARY_PATH=${PG4_BUILD}/lib:$LD_LIBRARY_PATH
+# let Python find the PG4 job launcher scripts:
+export PYTHONPATH=$PYTHONPATH:${PG4_CODE}/mac/
+
+export HDF5_INSTALL=/cmn/prospect/HDF5_1.10.0-patch1
+
+# a little extra for batch job scripts
+export MPMUTILS=${APP_DIR}/MPMUtils/
+export PYTHONPATH=${MPMUTILS}/pyUtils/
+
+export WITHOUT_FFTW3=true
+
+# Settings for most recent analysis pass
+export P2X_RAWDAT=/projects/prospect/data/Yale/
+export P2X_PROCESSED=/projects/prospect/converted_data/
+export P2X_UNPACKED=$P2X_PROCESSED/Unpacked/
+export P2X_PULSEDAT=$P2X_PROCESSED/Pulse_Latest/
+
+export PROSPECT_RUNSDB=$P2X_PULSEDAT/PROSPECT_RunsDB.sql
+
+#========================================================================================
+# Settings for running the Ac227 Analysis over AD Data
+
+# Where the calibrated data lives
+export P2X_PHYSDAT=$P2X_PROCESSED/Phys_20180409
+
+# Where I want the results from the plugin to live
+export P2X_ANALYZED=$HOME/AD_Ac227Analysis/Data/Phys_20180409/
+
+# Using personal copies of databases
+export PROSPECT_CALDB=$P2X_ANALYZED/PROSPECT_CalDB.sql
+export PROSPECT_ANADB=$P2X_ANALYZED/PROSPECT_AnaDB.sql
+
+# Where the plots from running ReadAc227Trees.C will go
+export AD_AC227ANALYSIS_DATA_PLOTS=$P2X_ANALYZED/Plots
+

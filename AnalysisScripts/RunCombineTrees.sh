@@ -1,10 +1,12 @@
 #!/bin/bash
 
-rm filePath.txt
+rm $AD_AC227ANALYSIS_SCRIPTS/filePath.txt
 
-printf -v s "%03d" $1
-RUN=$2
-RUNEND=$3
+DATATYPE=$1
+
+printf -v s "%03d" $2
+RUN=$3
+RUNEND=$4
 
 echo "===================================================================="
 echo "Going to combine trees of series ${s}, runs ${RUN} through ${RUNEND}"
@@ -12,9 +14,22 @@ echo "Going to combine trees of series ${s}, runs ${RUN} through ${RUNEND}"
 echo "===================================================================="
 echo "ADDING FILE PATHS TO TEXT FILE"
 
-SERIESDIR=$(find $P2X_ANALYZED/180316_Background -type d -name "series${s}" -exec echo {} \;)
+if [ $DATATYPE -eq 0 ]
+then
+	SERIESDIR=$(find $P2X_ANALYZED/WetCommissioning -type d -name "series${s}" -exec echo {} \;)
+fi
 
-echo ${s} >> filePath.txt
+if [ $DATATYPE -eq 1 ]
+then
+	SERIESDIR=$(find $P2X_ANALYZED/180316_Rampdown -type d -name "series${s}" -exec echo {} \;)
+fi
+
+if [ $DATATYPE -eq 2 ]
+then
+	SERIESDIR=$(find $P2X_ANALYZED/180316_Background -type d -name "series${s}" -exec echo {} \;)
+fi
+
+echo ${s} >> $AD_AC227ANALYSIS_SCRIPTS/filePath.txt
 
 while [ $RUN -le $RUNEND ]; do
 
@@ -26,7 +41,7 @@ while [ $RUN -le $RUNEND ]; do
 	if [ ${RUNDIR} ]; then
 	
 		FILE=$(find $RUNDIR -type f -name "ADAnalyzer.root" -exec echo {} \;) 
-		echo ${FILE} >> filePath.txt	
+		echo ${FILE} >> $AD_AC227ANALYSIS_SCRIPTS/filePath.txt	
 
 	fi
 
@@ -37,8 +52,9 @@ echo "===================================================================="
 echo "COMBINING FILES INTO ONE ROOT TREE"
 
 root -l -b  <<EOF
-.L CombineTrees.C+
-CombineTrees()
+int DataType = $DATATYPE 
+.L $AD_AC227ANALYSIS_SCRIPTS/CombineTrees.C+
+CombineTrees(DataType)
 .q
 EOF
 

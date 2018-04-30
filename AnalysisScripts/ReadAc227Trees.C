@@ -26,7 +26,7 @@
 
 using namespace std;
 
-tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(string TreeDir, const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG){
+tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG){
 
 	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
 	bool exclude;
@@ -118,7 +118,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	double posCut = Ac_zCut;	//mm
 
 
-	TFile *outFile = new TFile("Ac227Histograms.root","RECREATE");
+	TFile *outFile = new TFile(Form("%s/Ac227Histograms.root",getenv("AD_AC227ANALYSIS_DATA_PLOTS")),"RECREATE");
 
 //===============================================================
 //Set up histograms
@@ -1212,7 +1212,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	return make_tuple(IDX, tstamp, vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff, vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosSigma);
 }
 
-void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG){
+void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG){
 
 	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
 	bool exclude;
@@ -1283,6 +1283,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	TGraphErrors *grRate_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grN_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grLifetime_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grEnEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grTotEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoEnMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoPSDMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
@@ -1340,7 +1341,7 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 		TH1F* hPoEnMeanPerCell = new TH1F("hPoEnMeanPerCell","Po Energy Mean Per Cell;Energy [MeVee];Counts",hNumBins,0.79,0.83);
 		TH1F* hDzMeanPerCell = new TH1F("hDzMeanPerCell","Dz Mean Per Cell;#Deltaz [mm];Counts",hNumBins,-5,5);
 		
-		auto results = ReadAc227Trees(TreeDir, NUMCELLS, IDX, NUMTREES, n, PLOTFLAG);
+		auto results = ReadAc227Trees(NUMCELLS, IDX, NUMTREES, n, PLOTFLAG);
 		IDX 	  	 = get<0>(results);
 		tstamp    	 = get<1>(results);
 
@@ -1439,6 +1440,9 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	
 		grLifetime_AllCells->SetPoint(n,tstamp,vLifetime[0][NUMCELLS]);
 		grLifetime_AllCells->SetPointError(n,0,vLifetime[1][NUMCELLS]);
+
+		grEnEff_AllCells->SetPoint(n,tstamp,vEnEff[2][NUMCELLS]);
+		grEnEff_AllCells->SetPointError(n,0,vEnEff[3][NUMCELLS]);
 
 		grTotEff_AllCells->SetPoint(n,tstamp,vTotEff[0][NUMCELLS]);
 		grTotEff_AllCells->SetPointError(n,0,vTotEff[1][NUMCELLS]);	
@@ -1563,6 +1567,18 @@ void PlotResults(string TreeDir, const int NUMCELLS, int NUMTREES, int PLOTFLAG)
 	grLifetime_AllCells->GetXaxis()->SetTimeDisplay(1);
 	grLifetime_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
 	cLifetimeAllCells->SaveAs(Form("%s/Lifetime_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
+	TCanvas *cEnEffAllCells = new TCanvas("cEnEffAllCells","Tot Eff All Cells",1);
+	grEnEff_AllCells->SetTitle("Total Energy Efficiency of Detector");
+	grEnEff_AllCells->GetYaxis()->SetTitle("Eff");
+	grEnEff_AllCells->GetXaxis()->SetLabelOffset(0.028);
+	grEnEff_AllCells->SetMarkerStyle(20);
+	grEnEff_AllCells->SetMarkerColor(kBlue);
+	grEnEff_AllCells->SetLineColor(kBlue);
+	grEnEff_AllCells->Draw("AP");
+	grEnEff_AllCells->GetXaxis()->SetTimeDisplay(1);
+	grEnEff_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	cEnEffAllCells->SaveAs(Form("%s/EnEff_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cTotEffAllCells = new TCanvas("cTotEffAllCells","Tot Eff All Cells",1);
 	grTotEff_AllCells->SetTitle("Total Efficiency of Detector");

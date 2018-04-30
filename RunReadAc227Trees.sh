@@ -4,12 +4,11 @@ rm $AD_AC227ANALYSIS_DATA_PLOTS/*
 
 root -l -b <<EOF
 
-.L ReadAc227Trees.C+
-string treeDir = Form("%s",gSystem->Getenv("P50X_AC227ANALYSIS_TREES"));
+.L $AD_AC227ANALYSIS_SCRIPTS/ReadAc227Trees.C+
 const int numCells = 154;
-const int numTrees = 645/5;
-const int PLOTFLAG = 0;
-PlotResults(treeDir,numCells,numTrees,PLOTFLAG)
+const int numTrees = 590/10;
+const int PLOTFLAG = 2;
+PlotResults(numCells,numTrees,PLOTFLAG)
 
 .q
 
