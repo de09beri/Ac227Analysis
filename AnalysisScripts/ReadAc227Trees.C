@@ -26,7 +26,7 @@
 
 using namespace std;
 
-tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG){
+tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG, double PSDCUTLOW, double PSDCUTHIGH){
 
 	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
 	bool exclude;
@@ -239,10 +239,16 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	TH1F* hRnPoSelectSeg = new TH1F("hRnPoSelectSeg","RnPo Event Segment;Segment;Counts",154,0,154);
 	TH1F* hRnPoBGSeg = new TH1F("hRnPoBGSeg","RnPo Event Segment;Segment;Counts",154,0,154);
 
+	double promptTime, promptPSD;
+
 	for(int i=IDX;i<nAcEvents;i++){
 		AcChain.GetEvent(i);
 
-		double promptTime = Ac_t[0]*CONVERTnsTOms;
+		promptPSD = Ac_PSD[0];
+		if(promptPSD<PSDCUTLOW || promptPSD>PSDCUTHIGH) goto skipEntry;
+
+
+		promptTime = Ac_t[0]*CONVERTnsTOms;
 
 		//if starting to look at a new tree calculate livetime for previous tree
 		if(promptTime<prevTime){
@@ -261,8 +267,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		segNum = Ac_seg[0];
 		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), segNum) != end(ExcludeCellArr);
 
+
 		//check if there is a selected delay event
-		if(Ac_evt[1]!=0 && !exclude){
+		if(Ac_evt[1]!=0 && !exclude && Ac_PSD[1]>PSDCUTLOW && Ac_PSD[1]<PSDCUTHIGH){
 			segNum = Ac_seg[1];
 			hRnPoSelectSeg->Fill(segNum);
 
@@ -294,7 +301,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		}
 
 		//check if there is a background delay event
-		if(Ac_evt[2]!=0 && !exclude){
+		if(Ac_evt[2]!=0 && !exclude && Ac_PSD[2]>PSDCUTLOW && Ac_PSD[2]<PSDCUTHIGH){
 			segNum = Ac_seg[2];	
 			hRnPoBGSeg->Fill(segNum);	
 	
@@ -325,6 +332,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 			hBGDelayEnVsPromptEn->Fill(Ac_E[0],Ac_E[2]);
 		}
 
+		skipEntry:
 
 		IDX = i;
 	}	//end for loop over AcChain
@@ -1212,7 +1220,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	return make_tuple(IDX, tstamp, vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff, vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosSigma);
 }
 
-void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG){
+void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLOW, double PSDCUTHIGH){
 
 	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
 	bool exclude;
@@ -1341,7 +1349,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG){
 		TH1F* hPoEnMeanPerCell = new TH1F("hPoEnMeanPerCell","Po Energy Mean Per Cell;Energy [MeVee];Counts",hNumBins,0.79,0.83);
 		TH1F* hDzMeanPerCell = new TH1F("hDzMeanPerCell","Dz Mean Per Cell;#Deltaz [mm];Counts",hNumBins,-5,5);
 		
-		auto results = ReadAc227Trees(NUMCELLS, IDX, NUMTREES, n, PLOTFLAG);
+		auto results = ReadAc227Trees(NUMCELLS, IDX, NUMTREES, n, PLOTFLAG, PSDCUTLOW, PSDCUTHIGH);
 		IDX 	  	 = get<0>(results);
 		tstamp    	 = get<1>(results);
 
