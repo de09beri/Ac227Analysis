@@ -25,6 +25,8 @@
 	Move to Ac227Analysis  
 	Edit RunReadAc227Trees.sh    
 		numTrees = 590/n, where n is the number of time periods that you would like to look at. n = 1, will look at all data   
+		PSDCUTLOW = (0.1,0.4) any number in this range, psd cut for prompt and delay events 
+		PSDCUTHIGH = (0.1,0.4) any number in this range, psd cut for prompt and delay events
 		PLOTFLAG = <1,2>, will determine which plots are created  
 			     = 1 will create plots of PSD vs. Energy, <Dt, Energy, PSD, Dz> distributions, <Rate, Efficiency, Energy Mean, PSD Mean, Dz Mean,...> per cell.   
 				   This is suggested for using when n = 1  
