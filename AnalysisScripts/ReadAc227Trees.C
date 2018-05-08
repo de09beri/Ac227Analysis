@@ -1637,7 +1637,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 			grPt++;
 
 				ET = find(begin(ETCellArr), end(ETCellArr), i) != end(ETCellArr);
-				if(!ET){
+				if(ET){
 				//Graphs of variables per cell
 				vgrRatePerCellET[n]->SetPoint(grPtET,i,vRate[0][i]*1e6);
 				vgrRatePerCellET[n]->SetPointError(grPtET,0,vRate[1][i]*1e6);
@@ -1974,7 +1974,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	
 		grPt++;
 			ET = find(begin(ETCellArr), end(ETCellArr), i) != end(ETCellArr);
-			if(!ET){
+			if(ET){
 			vgrRelRatePerCellET[0]->SetPoint(grPtET,i,relRate);
 			vgrRelRatePerCellET[0]->SetPointError(grPtET,0,relRateErr);
 
