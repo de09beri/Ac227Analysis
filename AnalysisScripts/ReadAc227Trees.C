@@ -26,7 +26,7 @@
 
 using namespace std;
 
-tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG, double PSDCUTLOW, double PSDCUTHIGH){
+tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG, double PSDCUTLOW, double PSDCUTHIGH){
 
 	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
 	bool exclude;
@@ -66,7 +66,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set0.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set1.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set2.root",getenv("P2X_ANALYZED")));
-	AcChain.Add(Form("%s/180316_Rampdown/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+	//AcChain.Add(Form("%s/180316_Rampdown/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series001_AcTrees.root",getenv("P2X_ANALYZED")));
 
@@ -109,7 +109,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		vvNull.push_back(vNull); 
 		return make_tuple(IDX, ts, 
 			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, 
-			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
+			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
 	}
 	else if((IDX+1)>=nAcEvents){ 
 		printf("FINISHED ANALYSIS! :D \n");
@@ -121,7 +121,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		vvNull.push_back(vNull); 
 		return make_tuple(IDX, ts, 
 			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, 
-			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
+			   vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull, vvNull);
 	}
 
 //===============================================================
@@ -392,20 +392,20 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	double rate,    N,    lifetime,    promptPSDEff,    delayPSDEff,     promptEnEff,    delayEnEff,    posEff,    totEff;
 	double rateErr, NErr, lifetimeErr, promptPSDEffErr, delayPSDEffErr,  promptEnEffErr, delayEnEffErr, posEffErr, totEffErr;
 
-	double PoEnMean, 	PoEnSigma,    RnPSDMean,    PoPSDMean,    RnPoDzMean,    RnPoDzSigma,    PoPosSigma;
-	double PoEnMeanErr, PoEnSigmaErr, RnPSDMeanErr, PoPSDMeanErr, RnPoDzMeanErr, RnPoDzSigmaErr, PoPosSigmaErr;
+	double PoEnMean, 	PoEnSigma,    RnPSDMean,    PoPSDMean,    RnPoDzMean,    RnPoDzSigma,    PoPosMean,    PoPosSigma;
+	double PoEnMeanErr, PoEnSigmaErr, RnPSDMeanErr, PoPSDMeanErr, RnPoDzMeanErr, RnPoDzSigmaErr, PoPosMeanErr, PoPosSigmaErr;
 
 	vector<double> vRate,    vN,    vLifetime,    vPromptPSDEff,    vDelayPSDEff,    vPromptEnEff,    vDelayEnEff,    vPosEff,    vTotEff;
 	vector<double> vRateErr, vNErr, vLifetimeErr, vPromptPSDEffErr, vDelayPSDEffErr, vPromptEnEffErr, vDelayEnEffErr, vPosEffErr, vTotEffErr; 
 
-	vector<double> vPoEnMean,    vPoEnSigma,    vRnPSDMean,    vPoPSDMean,    vRnPoDzMean,    vRnPoDzSigma,    vPoPosSigma;
-	vector<double> vPoEnMeanErr, vPoEnSigmaErr, vRnPSDMeanErr, vPoPSDMeanErr, vRnPoDzMeanErr, vRnPoDzSigmaErr, vPoPosSigmaErr;
+	vector<double> vPoEnMean,    vPoEnSigma,    vRnPSDMean,    vPoPSDMean,    vRnPoDzMean,    vRnPoDzSigma,    vPoPosMean,    vPoPosSigma;
+	vector<double> vPoEnMeanErr, vPoEnSigmaErr, vRnPSDMeanErr, vPoPSDMeanErr, vRnPoDzMeanErr, vRnPoDzSigmaErr, vPoPosMeanErr, vPoPosSigmaErr;
 
 	double rateAllCells,    NAllCells,    lifetimeAllCells,    promptPSDEffAllCells,    delayPSDEffAllCells,     promptEnEffAllCells,    delayEnEffAllCells,    posEffAllCells,    totEffAllCells;
 	double rateErrAllCells, NErrAllCells, lifetimeErrAllCells, promptPSDEffErrAllCells, delayPSDEffErrAllCells,  promptEnEffErrAllCells, delayEnEffErrAllCells, posEffErrAllCells, totEffErrAllCells;
 
-	double PoEnMeanAllCells,    PoEnSigmaAllCells,    RnPSDMeanAllCells,    PoPSDMeanAllCells,    RnPoDzMeanAllCells,    RnPoDzSigmaAllCells,    PoPosSigmaAllCells;
-	double PoEnMeanErrAllCells, PoEnSigmaErrAllCells, RnPSDMeanErrAllCells, PoPSDMeanErrAllCells, RnPoDzMeanErrAllCells, RnPoDzSigmaErrAllCells, PoPosSigmaErrAllCells;
+	double PoEnMeanAllCells,    PoEnSigmaAllCells,    RnPSDMeanAllCells,    PoPSDMeanAllCells,    RnPoDzMeanAllCells,    RnPoDzSigmaAllCells,    PoPosMeanAllCells,    PoPosSigmaAllCells;
+	double PoEnMeanErrAllCells, PoEnSigmaErrAllCells, RnPSDMeanErrAllCells, PoPSDMeanErrAllCells, RnPoDzMeanErrAllCells, RnPoDzSigmaErrAllCells, PoPosMeanErrAllCells, PoPosSigmaErrAllCells;
 
 //===============================================================
 
@@ -457,7 +457,6 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		vhRnPoDt.push_back(hRnPoDt);
 
 		fDtExp = new TF1("fDtExp",cfDtExp.c_str(),selectDtMin,selectDtMax);
-		if(i==110) fDtExp = new TF1("fDtExp",cfDtExp.c_str(),0.6,selectDtMax);
 
 		fDtExp->SetParName(0,"N");
 		fDtExp->SetParName(1,"PoLifetime");
@@ -603,6 +602,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 
 		RnPoDzSigma = fDzGaus->GetParameter(2);
 		RnPoDzSigmaErr = fDzGaus->GetParError(2);
+		
+		PoPosMean = hPoPos->GetMean();
+		PoPosMeanErr = hPoPos->GetMeanError();
 
 		PoPosSigma = hPoPos->GetRMS();
 		PoPosSigmaErr = hPoPos->GetRMSError();
@@ -794,6 +796,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		vRnPoDzMeanErr.push_back(RnPoDzMeanErr);
 		vRnPoDzSigma.push_back(RnPoDzSigma);
 		vRnPoDzSigmaErr.push_back(RnPoDzSigmaErr);
+		vPoPosMean.push_back(PoPosMean);
+		vPoPosMeanErr.push_back(PoPosMeanErr);
 		vPoPosSigma.push_back(PoPosSigma);
 		vPoPosSigmaErr.push_back(PoPosSigmaErr);
 
@@ -826,6 +830,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 
 	hRnPoDt_AllCells->Fit(fDtExp,"RQ");
 
+cout<<hSelectDt_AllCells->GetEntries()<<" "<<hBGDt_AllCells->GetEntries()<<" "<<hRnPoDt_AllCells<<endl;
 	//--------------------------------------------------------------------------
 	//Subtract prompt and delay PSD histograms
 	hPromptPSD_AllCells = (TH1F*)hSelectPromptPSD_AllCells->Clone();
@@ -958,6 +963,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	RnPoDzSigmaAllCells = fDzGaus->GetParameter(2);
 	RnPoDzSigmaErrAllCells = fDzGaus->GetParError(2);
 
+	PoPosMeanAllCells = hPoPos_AllCells->GetMean();
+	PoPosMeanErrAllCells = hPoPos_AllCells->GetMeanError();
+
 	PoPosSigmaAllCells = hPoPos_AllCells->GetRMS();
 	PoPosSigmaErrAllCells = hPoPos_AllCells->GetRMSError();
 
@@ -1006,6 +1014,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	vRnPoDzMeanErr.push_back(RnPoDzMeanErrAllCells);
 	vRnPoDzSigma.push_back(RnPoDzSigmaAllCells);
 	vRnPoDzSigmaErr.push_back(RnPoDzSigmaErrAllCells);
+	vPoPosMean.push_back(PoPosMeanAllCells);
+	vPoPosMeanErr.push_back(PoPosMeanErrAllCells);
 	vPoPosSigma.push_back(PoPosSigmaAllCells);
 	vPoPosSigmaErr.push_back(PoPosSigmaErrAllCells);
 
@@ -1235,7 +1245,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	outFile->Close();
 
 	vector<vector<double>> vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff;
-	vector<vector<double>> vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosSigma;
+	vector<vector<double>> vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosMean, vvPoPosSigma;
 
 	vvRate.push_back(vRate);
 	vvRate.push_back(vRateErr);
@@ -1268,6 +1278,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	vvRnPoDzMean.push_back(vRnPoDzMeanErr);
 	vvRnPoDzSigma.push_back(vRnPoDzSigma);
 	vvRnPoDzSigma.push_back(vRnPoDzSigmaErr);
+	vvPoPosMean.push_back(vPoPosMean);	
+	vvPoPosMean.push_back(vPoPosMeanErr);	
 	vvPoPosSigma.push_back(vPoPosSigma);	
 	vvPoPosSigma.push_back(vPoPosSigmaErr);	
 
@@ -1275,13 +1287,18 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	rateTree.Write("",TObject::kOverwrite);
 	rateTreeFile.Close();
 
-	return make_tuple(IDX, tstamp, vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff, vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosSigma);
+	return make_tuple(IDX, tstamp, vvRate, vvN, vvLifetime, vvPSDEff, vvEnEff, vvPosEff, vvTotEff, vvPoEnMean, vvPoEnSigma, vvRnPSDMean, vvPoPSDMean, vvRnPoDzMean, vvRnPoDzSigma, vvPoPosMean, vvPoPosSigma);
 }
 
 void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLOW, double PSDCUTHIGH){
 
-	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
+	const int NUMEXCLUDECELLS = 28;
+	int ExcludeCellArr[NUMEXCLUDECELLS] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
 	bool exclude;
+
+	const int NUMETCELLS = 46, NUMEXCLUDEETCELLS = 13 ;
+	int ETCellArr[NUMETCELLS] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,27,28,41,42,55,56,69,70,83,84,97,98,111,112,125,126,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153};
+	bool ET;
 
 	int IDX = 0;
 
@@ -1300,7 +1317,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set0.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set1.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set2.root",getenv("P2X_ANALYZED")));
-	AcChain.Add(Form("%s/180316_Rampdown/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+	//AcChain.Add(Form("%s/180316_Rampdown/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series001_AcTrees.root",getenv("P2X_ANALYZED")));
 
@@ -1357,12 +1374,22 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	TGraphErrors *grPoEnMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoPSDMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grRnPoDzMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grPoPosMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoPosSigma_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 
-	int NumActiveCells = NUMCELLS - 28;
+	int NumActiveCells = NUMCELLS - NUMEXCLUDECELLS;
 	double xPerCell[NumActiveCells], xErrPerCell[NumActiveCells];
+
 	vector<TGraphErrors*> vgrRatePerCell, vgrRelRatePerCell, vgrPromptPSDEffPerCell, vgrDelayPSDEffPerCell, vgrPromptEnEffPerCell, vgrDelayEnEffPerCell, vgrPosEffPerCell, vgrEffPerCell;
-	vector<TGraphErrors*> vgrPoEnMeanPerCell, vgrPoEnSigmaPerCell, vgrRnPSDMeanPerCell, vgrPoPSDMeanPerCell, vgrRnPoDzMeanPerCell, vgrRnPoDzSigmaPerCell, vgrPoPosSigmaPerCell;
+	vector<TGraphErrors*> vgrPoEnMeanPerCell, vgrPoEnSigmaPerCell, vgrRelPoEnMeanPerCell, vgrRelPoEnSigmaPerCell, vgrRnPSDMeanPerCell, vgrPoPSDMeanPerCell, vgrRnPoDzMeanPerCell, vgrRnPoDzSigmaPerCell, vgrPoPosMeanPerCell, vgrPoPosSigmaPerCell;
+
+	int NumActiveCellsET = NUMETCELLS - NUMEXCLUDEETCELLS;
+	double xPerCellET[NumActiveCellsET], xErrPerCellET[NumActiveCellsET];
+
+	vector<TGraphErrors*> vgrRatePerCellET, vgrRelRatePerCellET, vgrPromptPSDEffPerCellET, vgrDelayPSDEffPerCellET, vgrPromptEnEffPerCellET, vgrDelayEnEffPerCellET, vgrPosEffPerCellET, vgrEffPerCellET;
+	vector<TGraphErrors*> vgrPoEnMeanPerCellET, vgrPoEnSigmaPerCellET, vgrRelPoEnMeanPerCellET, vgrRelPoEnSigmaPerCellET, vgrRnPSDMeanPerCellET, vgrPoPSDMeanPerCellET, vgrRnPoDzMeanPerCellET, vgrRnPoDzSigmaPerCellET, vgrPoPosMeanPerCellET, vgrPoPosSigmaPerCellET;
+
+	//============================================================================================================
 	for(int i=0;i<numBins;i++){
 		TGraphErrors *grRatePerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
 		vgrRatePerCell.push_back(grRatePerCell_new);
@@ -1394,6 +1421,13 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 		TGraphErrors *grPoEnSigmaPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
 		vgrPoEnSigmaPerCell.push_back(grPoEnSigmaPerCell_new);
 
+		// The mean of the Po Energy distribution in keV, relative to cell 76
+		TGraphErrors *grRelPoEnMeanPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
+		vgrRelPoEnMeanPerCell.push_back(grRelPoEnMeanPerCell_new);
+
+		TGraphErrors *grRelPoEnSigmaPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);
+		vgrRelPoEnSigmaPerCell.push_back(grRelPoEnSigmaPerCell_new);
+
 		TGraphErrors *grRnPSDMeanPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);	
 		vgrRnPSDMeanPerCell.push_back(grRnPSDMeanPerCell_new);
 
@@ -1406,14 +1440,75 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 		TGraphErrors *grRnPoDzSigmaPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);	
 		vgrRnPoDzSigmaPerCell.push_back(grRnPoDzSigmaPerCell_new);
 
+		TGraphErrors *grPoPosMeanPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);	
+		vgrPoPosMeanPerCell.push_back(grPoPosMeanPerCell_new);
+
 		TGraphErrors *grPoPosSigmaPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);	
 		vgrPoPosSigmaPerCell.push_back(grPoPosSigmaPerCell_new);
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+		//Graphs for ET cells
+
+		TGraphErrors *grRatePerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrRatePerCellET.push_back(grRatePerCellET_new);
+
+		TGraphErrors *grRelRatePerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrRelRatePerCellET.push_back(grRelRatePerCellET_new);
+
+		TGraphErrors *grPromptPSDEffPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrPromptPSDEffPerCellET.push_back(grPromptPSDEffPerCellET_new);
+
+		TGraphErrors *grDelayPSDEffPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrDelayPSDEffPerCellET.push_back(grDelayPSDEffPerCellET_new);
+
+		TGraphErrors *grPromptEnEffPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrPromptEnEffPerCellET.push_back(grPromptEnEffPerCellET_new);
+
+		TGraphErrors *grDelayEnEffPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrDelayEnEffPerCellET.push_back(grDelayEnEffPerCellET_new);
+
+		TGraphErrors *grPosEffPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrPosEffPerCellET.push_back(grPosEffPerCellET_new);
+
+		TGraphErrors *grEffPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrEffPerCellET.push_back(grEffPerCellET_new);
+
+		TGraphErrors *grPoEnMeanPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrPoEnMeanPerCellET.push_back(grPoEnMeanPerCellET_new);
+
+		TGraphErrors *grPoEnSigmaPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrPoEnSigmaPerCellET.push_back(grPoEnSigmaPerCellET_new);
+
+		// The mean of the Po Energy distribution in keV, relative to cell 76
+		TGraphErrors *grRelPoEnMeanPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrRelPoEnMeanPerCellET.push_back(grRelPoEnMeanPerCellET_new);
+
+		TGraphErrors *grRelPoEnSigmaPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);
+		vgrRelPoEnSigmaPerCellET.push_back(grRelPoEnSigmaPerCellET_new);
+
+		TGraphErrors *grRnPSDMeanPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);	
+		vgrRnPSDMeanPerCellET.push_back(grRnPSDMeanPerCellET_new);
+
+		TGraphErrors *grPoPSDMeanPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);	
+		vgrPoPSDMeanPerCellET.push_back(grPoPSDMeanPerCellET_new);
+
+		TGraphErrors *grRnPoDzMeanPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);	
+		vgrRnPoDzMeanPerCellET.push_back(grRnPoDzMeanPerCellET_new);
+
+		TGraphErrors *grRnPoDzSigmaPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);	
+		vgrRnPoDzSigmaPerCellET.push_back(grRnPoDzSigmaPerCellET_new);
+
+		TGraphErrors *grPoPosMeanPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);	
+		vgrPoPosMeanPerCellET.push_back(grPoPosMeanPerCellET_new);
+
+		TGraphErrors *grPoPosSigmaPerCellET_new = new TGraphErrors(NumActiveCellsET,xPerCellET,y,xErrPerCellET,yErr);	
+		vgrPoPosSigmaPerCellET.push_back(grPoPosSigmaPerCellET_new);
 	}
 
 	//--------------------------------------------------------------------------
 	//Fill histograms
 	vector<vector<double>> vRate, vN, vLifetime, vPSDEff, vEnEff, vPosEff, vTotEff;
-	vector<vector<double>> vPoEnMean, vPoEnSigma, vRnPSDMean, vPoPSDMean, vRnPoDzMean, vRnPoDzSigma, vPoPosSigma;
+	vector<vector<double>> vPoEnMean, vPoEnSigma, vRnPSDMean, vPoPSDMean, vRnPoDzMean, vRnPoDzSigma, vPoPosMean, vPoPosSigma;
 	double tstamp;
 
 	int n=0;
@@ -1443,7 +1538,8 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 		vPoPSDMean   = get<12>(results);	
 		vRnPoDzMean  = get<13>(results);
 		vRnPoDzSigma = get<14>(results);
-		vPoPosSigma  = get<15>(results);
+		vPoPosMean   = get<15>(results);
+		vPoPosSigma  = get<16>(results);
 
 		if(IDX<0) break;
 
@@ -1453,9 +1549,10 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 		double totalRate = vRate[0][NUMCELLS];
 		double totalRateErr = vRate[1][NUMCELLS];
 
-		int grPt = 0;
+		int grPt = 0, grPtET = 0;
 
-		double avgRate = 3.274, avgRateErr = 0.004189;
+		double centerCellPoEnMean = vPoEnMean[0][76], centerCellPoEnMeanErr = vPoEnMean[1][76];
+		double centerCellPoEnSigma = vPoEnSigma[0][76], centerCellPoEnSigmaErr = vPoEnSigma[1][76];
 
 		for(int i=0;i<NUMCELLS;i++){
 
@@ -1483,13 +1580,23 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 			vgrRatePerCell[n]->SetPoint(grPt,i,vRate[0][i]*1e6);
 			vgrRatePerCell[n]->SetPointError(grPt,0,vRate[1][i]*1e6);
 
-			relRate = vRate[0][i]/avgRate;
-			double relRateErr = relRate * sqrt(pow(vRate[1][i]/vRate[0][i],2)+pow(avgRateErr/avgRate,2)); 
-			vgrRelRatePerCell[n]->SetPoint(grPt,i,relRate);
-			vgrRelRatePerCell[n]->SetPointError(grPt,0,relRateErr);
+			vgrPoEnMeanPerCell[n]->SetPoint(grPt,i,vPoEnMean[0][i]*1000);
+			vgrPoEnMeanPerCell[n]->SetPointError(grPt,0,vPoEnMean[1][i]*1000);
+			
+			vgrPoEnSigmaPerCell[n]->SetPoint(grPt,i,vPoEnSigma[0][i]*1000);
+			vgrPoEnSigmaPerCell[n]->SetPointError(grPt,0,vPoEnSigma[1][i]*1000);
 
-			vgrPoEnMeanPerCell[n]->SetPoint(grPt,i,vPoEnMean[0][i]);
-			vgrPoEnMeanPerCell[n]->SetPointError(grPt,0,vPoEnMean[1][i]);			
+			double relPoEnMean = centerCellPoEnMean - vPoEnMean[0][i];
+			double relPoEnMeanErr = sqrt(pow(centerCellPoEnMeanErr,2) + pow(vPoEnMean[1][i],2));
+
+			vgrRelPoEnMeanPerCell[n]->SetPoint(grPt,i,relPoEnMean*1000);
+			vgrRelPoEnMeanPerCell[n]->SetPointError(grPt,0,relPoEnMeanErr*1000);			
+
+			double relPoEnSigma = centerCellPoEnSigma - vPoEnSigma[0][i];
+			double relPoEnSigmaErr = sqrt(pow(centerCellPoEnSigmaErr,2) + pow(vPoEnSigma[1][i],2));
+
+			vgrRelPoEnSigmaPerCell[n]->SetPoint(grPt,i,relPoEnSigma*1000);
+			vgrRelPoEnSigmaPerCell[n]->SetPointError(grPt,0,relPoEnSigmaErr*1000);
 
 			vgrPromptPSDEffPerCell[n]->SetPoint(grPt,i,vPSDEff[0][i]);
 			vgrPromptPSDEffPerCell[n]->SetPointError(grPt,0,vPSDEff[1][i]);
@@ -1509,9 +1616,6 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 			vgrEffPerCell[n]->SetPoint(grPt,i,vTotEff[0][i]);
 			vgrEffPerCell[n]->SetPointError(grPt,0,vTotEff[1][i]);
 
-			vgrPoEnSigmaPerCell[n]->SetPoint(grPt,i,vPoEnSigma[0][i]);
-			vgrPoEnSigmaPerCell[n]->SetPointError(grPt,0,vPoEnSigma[1][i]);
-
 			vgrRnPSDMeanPerCell[n]->SetPoint(grPt,i,vRnPSDMean[0][i]);
 			vgrRnPSDMeanPerCell[n]->SetPointError(grPt,0,vRnPSDMean[1][i]);
 	
@@ -1524,10 +1628,76 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 			vgrRnPoDzSigmaPerCell[n]->SetPoint(grPt,i,vRnPoDzSigma[0][i]);
 			vgrRnPoDzSigmaPerCell[n]->SetPointError(grPt,0,vRnPoDzSigma[1][i]);
 
+			vgrPoPosMeanPerCell[n]->SetPoint(grPt,i,vPoPosMean[0][i]);
+			vgrPoPosMeanPerCell[n]->SetPointError(grPt,0,vPoPosMean[1][i]);
+
 			vgrPoPosSigmaPerCell[n]->SetPoint(grPt,i,vPoPosSigma[0][i]);
 			vgrPoPosSigmaPerCell[n]->SetPointError(grPt,0,vPoPosSigma[1][i]);
 
 			grPt++;
+
+				ET = find(begin(ETCellArr), end(ETCellArr), i) != end(ETCellArr);
+				if(!ET){
+				//Graphs of variables per cell
+				vgrRatePerCellET[n]->SetPoint(grPtET,i,vRate[0][i]*1e6);
+				vgrRatePerCellET[n]->SetPointError(grPtET,0,vRate[1][i]*1e6);
+
+				vgrPoEnMeanPerCellET[n]->SetPoint(grPtET,i,vPoEnMean[0][i]*1000);
+				vgrPoEnMeanPerCellET[n]->SetPointError(grPtET,0,vPoEnMean[1][i]*1000);
+			
+				vgrPoEnSigmaPerCellET[n]->SetPoint(grPtET,i,vPoEnSigma[0][i]*1000);
+				vgrPoEnSigmaPerCellET[n]->SetPointError(grPtET,0,vPoEnSigma[1][i]*1000);
+
+				relPoEnMean = centerCellPoEnMean - vPoEnMean[0][i];
+				relPoEnMeanErr = sqrt(pow(centerCellPoEnMeanErr,2) + pow(vPoEnMean[1][i],2));
+
+				vgrRelPoEnMeanPerCellET[n]->SetPoint(grPtET,i,relPoEnMean*1000);
+				vgrRelPoEnMeanPerCellET[n]->SetPointError(grPtET,0,relPoEnMeanErr*1000);			
+
+				relPoEnSigma = centerCellPoEnSigma - vPoEnSigma[0][i];
+				relPoEnSigmaErr = sqrt(pow(centerCellPoEnSigmaErr,2) + pow(vPoEnSigma[1][i],2));
+
+				vgrRelPoEnSigmaPerCellET[n]->SetPoint(grPtET,i,relPoEnSigma*1000);
+				vgrRelPoEnSigmaPerCellET[n]->SetPointError(grPtET,0,relPoEnSigmaErr*1000);
+
+				vgrPromptPSDEffPerCellET[n]->SetPoint(grPtET,i,vPSDEff[0][i]);
+				vgrPromptPSDEffPerCellET[n]->SetPointError(grPtET,0,vPSDEff[1][i]);
+
+				vgrDelayPSDEffPerCellET[n]->SetPoint(grPtET,i,vPSDEff[2][i]);
+				vgrDelayPSDEffPerCellET[n]->SetPointError(grPtET,0,vPSDEff[3][i]);
+
+				vgrPromptEnEffPerCellET[n]->SetPoint(grPtET,i,vEnEff[0][i]);
+				vgrPromptEnEffPerCellET[n]->SetPointError(grPtET,0,vEnEff[1][i]);
+
+				vgrDelayEnEffPerCellET[n]->SetPoint(grPtET,i,vEnEff[2][i]);
+				vgrDelayEnEffPerCellET[n]->SetPointError(grPtET,0,vEnEff[3][i]);
+
+				vgrPosEffPerCellET[n]->SetPoint(grPtET,i,vPosEff[0][i]);
+				vgrPosEffPerCellET[n]->SetPointError(grPtET,0,vPosEff[1][i]);
+
+				vgrEffPerCellET[n]->SetPoint(grPtET,i,vTotEff[0][i]);
+				vgrEffPerCellET[n]->SetPointError(grPtET,0,vTotEff[1][i]);
+
+				vgrRnPSDMeanPerCellET[n]->SetPoint(grPtET,i,vRnPSDMean[0][i]);
+				vgrRnPSDMeanPerCellET[n]->SetPointError(grPtET,0,vRnPSDMean[1][i]);
+	
+				vgrPoPSDMeanPerCellET[n]->SetPoint(grPtET,i,vPoPSDMean[0][i]);
+				vgrPoPSDMeanPerCellET[n]->SetPointError(grPtET,0,vPoPSDMean[1][i]);
+
+				vgrRnPoDzMeanPerCellET[n]->SetPoint(grPtET,i,vRnPoDzMean[0][i]);
+				vgrRnPoDzMeanPerCellET[n]->SetPointError(grPtET,0,vRnPoDzMean[1][i]);
+
+				vgrRnPoDzSigmaPerCellET[n]->SetPoint(grPtET,i,vRnPoDzSigma[0][i]);
+				vgrRnPoDzSigmaPerCellET[n]->SetPointError(grPtET,0,vRnPoDzSigma[1][i]);
+
+				vgrPoPosMeanPerCellET[n]->SetPoint(grPtET,i,vPoPosMean[0][i]);
+				vgrPoPosMeanPerCellET[n]->SetPointError(grPtET,0,vPoPosMean[1][i]);
+
+				vgrPoPosSigmaPerCellET[n]->SetPoint(grPtET,i,vPoPosSigma[0][i]);
+				vgrPoPosSigmaPerCellET[n]->SetPointError(grPtET,0,vPoPosSigma[1][i]);
+			
+				grPtET++;
+				}
 			}	
 		}
 
@@ -1554,6 +1724,9 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 
 		grRnPoDzMean_AllCells->SetPoint(n,tstamp,vRnPoDzMean[0][NUMCELLS]);
 		grRnPoDzMean_AllCells->SetPointError(n,0,vRnPoDzMean[1][NUMCELLS]);
+
+		grPoPosMean_AllCells->SetPoint(n,tstamp,vPoPosMean[0][NUMCELLS]);
+		grPoPosMean_AllCells->SetPointError(n,0,vPoPosMean[1][NUMCELLS]);
 
 		grPoPosSigma_AllCells->SetPoint(n,tstamp,vPoPosSigma[0][NUMCELLS]);
 		grPoPosSigma_AllCells->SetPointError(n,0,vPoPosSigma[1][NUMCELLS]);
@@ -1628,6 +1801,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	if(PLOTFLAG==2){
 
 	TCanvas *cRateAllCells = new TCanvas("cRateAllCells","Rate All Cells",1);
+	gPad->SetGrid();
 	grRate_AllCells->SetTitle("Total Rate of Detector");
 	grRate_AllCells->GetYaxis()->SetTitle("Rate (Hz)");
 	grRate_AllCells->GetYaxis()->SetTitleOffset(1.3);
@@ -1642,6 +1816,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cRateAllCells->SaveAs(Form("%s/Rate_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cNAllCells = new TCanvas("cNAllCells","N All Cells",1);
+	gPad->SetGrid();
 	grN_AllCells->SetTitle("Total N of Detector");
 	grN_AllCells->GetYaxis()->SetTitle("N");
 	grN_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1655,6 +1830,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cNAllCells->SaveAs(Form("%s/N_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cLifetimeAllCells = new TCanvas("cLifetimeAllCells","Lifetime All Cells",1);
+	gPad->SetGrid();
 	grLifetime_AllCells->SetTitle("Total Po-215 Lifetime of Detector");
 	grLifetime_AllCells->GetYaxis()->SetTitle("Lifetime (ms)");
 	grLifetime_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1668,6 +1844,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cLifetimeAllCells->SaveAs(Form("%s/Lifetime_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cEnEffAllCells = new TCanvas("cEnEffAllCells","Tot Eff All Cells",1);
+	gPad->SetGrid();
 	grEnEff_AllCells->SetTitle("Total Energy Efficiency of Detector");
 	grEnEff_AllCells->GetYaxis()->SetTitle("Eff");
 	grEnEff_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1680,6 +1857,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cEnEffAllCells->SaveAs(Form("%s/EnEff_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cTotEffAllCells = new TCanvas("cTotEffAllCells","Tot Eff All Cells",1);
+	gPad->SetGrid();
 	grTotEff_AllCells->SetTitle("Total Efficiency of Detector");
 	grTotEff_AllCells->GetYaxis()->SetTitle("Eff");
 	grTotEff_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1693,6 +1871,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cTotEffAllCells->SaveAs(Form("%s/TotEff_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoEnMeanAllCells = new TCanvas("cPoEnMeanAllCells","Po Mean All Cells",1);
+	gPad->SetGrid();
 	grPoEnMean_AllCells->SetTitle("Total Po-215 Mean of Detector");
 	grPoEnMean_AllCells->GetYaxis()->SetTitle("Energy [MeVee]");
 	grPoEnMean_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1707,6 +1886,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cPoEnMeanAllCells->SaveAs(Form("%s/PoEnMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoPSDMeanAllCells = new TCanvas("cPoPSDMeanAllCells","Po PSD Mean All Cells",1);
+	gPad->SetGrid();
 	grPoPSDMean_AllCells->SetTitle("Total Po-215 PSD Mean of Detector");
 	grPoPSDMean_AllCells->GetYaxis()->SetTitle("PSD");
 	grPoPSDMean_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1720,6 +1900,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cPoPSDMeanAllCells->SaveAs(Form("%s/PoPSDMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cRnPoDzMeanAllCells = new TCanvas("cRnPoDzMeanAllCells","RnPo Dz Mean All Cells",1);
+	gPad->SetGrid();
 	grRnPoDzMean_AllCells->SetTitle("Total RnPo Dz Mean of Detector");
 	grRnPoDzMean_AllCells->GetYaxis()->SetTitle("Dz [mm]");
 	grRnPoDzMean_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1732,7 +1913,22 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	grRnPoDzMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
 	cRnPoDzMeanAllCells->SaveAs(Form("%s/RnPoDzMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
+	TCanvas *cPoPosMeanAllCells = new TCanvas("cPoPosMeanAllCells","RnPo Dz Mean All Cells",1);
+	gPad->SetGrid();
+	grPoPosMean_AllCells->SetTitle("Total Po Position Mean of Detector");
+	grPoPosMean_AllCells->GetYaxis()->SetTitle("Mean");
+	grPoPosMean_AllCells->GetXaxis()->SetLabelOffset(0.028);
+	grPoPosMean_AllCells->SetMarkerStyle(20);
+	grPoPosMean_AllCells->SetMarkerColor(kBlue);
+	grPoPosMean_AllCells->SetLineColor(kBlue);
+	grPoPosMean_AllCells->Draw("AP");
+	grPoPosMean_AllCells->Fit("pol1");
+	grPoPosMean_AllCells->GetXaxis()->SetTimeDisplay(1);
+	grPoPosMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	cPoPosMeanAllCells->SaveAs(Form("%s/PoPosMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
 	TCanvas *cPoPosSigmaAllCells = new TCanvas("cPoPosSigmaAllCells","RnPo Dz Mean All Cells",1);
+	gPad->SetGrid();
 	grPoPosSigma_AllCells->SetTitle("Total Po Position Sigma of Detector");
 	grPoPosSigma_AllCells->GetYaxis()->SetTitle("Sigma");
 	grPoPosSigma_AllCells->GetXaxis()->SetLabelOffset(0.028);
@@ -1750,25 +1946,59 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	//Plots of variables per cell
 
 	if(PLOTFLAG==1){	
+	TF1 *fRatePol = new TF1("fRatePol","pol0");
+
 	TCanvas *cRatePerCell = new TCanvas("cRatePerCell","Rate Per Cell",1);
+	gPad->SetGrid();
 	vgrRatePerCell[0]->SetTitle("Rate Per Cell;Cell;Rate [mHz]");
 	vgrRatePerCell[0]->SetMarkerStyle(20);
 	vgrRatePerCell[0]->SetMarkerColor(kBlue); 
 	vgrRatePerCell[0]->SetLineColor(kBlue); 
 	vgrRatePerCell[0]->Draw("AP");
-	vgrRatePerCell[0]->Fit("pol0");
+	vgrRatePerCellET[0]->SetMarkerStyle(20);
+	vgrRatePerCellET[0]->SetMarkerColor(kRed); 
+	vgrRatePerCellET[0]->SetLineColor(kRed); 
+	vgrRatePerCellET[0]->Draw("P");
+	vgrRatePerCell[0]->Fit(fRatePol);
 	cRatePerCell->SaveAs(Form("%s/grRatePerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
+	double avgRate = fRatePol->GetParameter(0), avgRateErr = fRatePol->GetParError(0);
+	int grPt = 0, grPtET = 0;
+	for(int i=0;i<NUMCELLS;i++){
+		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
+		if(!exclude){
+		double relRate = vRate[0][i]/avgRate;
+		double relRateErr = relRate * sqrt(pow(vRate[1][i]/vRate[0][i],2)+pow(avgRateErr/avgRate,2)); 
+		vgrRelRatePerCell[0]->SetPoint(grPt,i,relRate);
+		vgrRelRatePerCell[0]->SetPointError(grPt,0,relRateErr);
+	
+		grPt++;
+			ET = find(begin(ETCellArr), end(ETCellArr), i) != end(ETCellArr);
+			if(!ET){
+			vgrRelRatePerCellET[0]->SetPoint(grPtET,i,relRate);
+			vgrRelRatePerCellET[0]->SetPointError(grPtET,0,relRateErr);
+
+			grPtET++;
+			}
+		}		
+	}
+
 	TCanvas *cRelRatePerCell = new TCanvas("cRelRatePerCell","Relative Rate Per Cell",1);
+	gPad->SetGrid();
 	vgrRelRatePerCell[0]->SetTitle("Rate Per Cell/Average Rate Per Cell;Cell;Relative Rate");
 	vgrRelRatePerCell[0]->SetMarkerStyle(20);
 	vgrRelRatePerCell[0]->SetMarkerColor(kBlue);
 	vgrRelRatePerCell[0]->SetLineColor(kBlue);
 	vgrRelRatePerCell[0]->Draw("AP");
-	vgrRelRatePerCell[0]->Fit("pol0");
+	vgrRelRatePerCellET[0]->SetMarkerStyle(20);
+	vgrRelRatePerCellET[0]->SetMarkerColor(kRed);
+	vgrRelRatePerCellET[0]->SetLineColor(kRed);
+	vgrRelRatePerCellET[0]->Draw("P");
+	vgrRelRatePerCellET[0]->Fit("pol0");
 	cRelRatePerCell->SaveAs(Form("%s/grRelRatePerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cAllEffPerCell = new TCanvas("cAllEffPerCell","AllEfficiency Per Cell",1);
+	gPad->SetGrid();
 	vgrPromptPSDEffPerCell[0]->SetTitle("Cut Efficiency Per Cell;Cell;Eff");
 	vgrPromptPSDEffPerCell[0]->GetYaxis()->SetRangeUser(0.97,1.01);
 
@@ -1781,6 +2011,15 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	vgrDelayPSDEffPerCell[0]->SetLineColor(kMagenta);
 	vgrDelayPSDEffPerCell[0]->Draw("P");
 
+	vgrPromptPSDEffPerCellET[0]->SetMarkerStyle(24);
+	vgrPromptPSDEffPerCellET[0]->SetMarkerColor(kBlue);
+	vgrPromptPSDEffPerCellET[0]->SetLineColor(kBlue);
+	vgrPromptPSDEffPerCellET[0]->Draw("P");
+	vgrDelayPSDEffPerCellET[0]->SetMarkerStyle(24);
+	vgrDelayPSDEffPerCellET[0]->SetMarkerColor(kMagenta);
+	vgrDelayPSDEffPerCellET[0]->SetLineColor(kMagenta);
+	vgrDelayPSDEffPerCellET[0]->Draw("P");
+
 	vgrPromptEnEffPerCell[0]->SetMarkerStyle(21);
 	vgrPromptEnEffPerCell[0]->SetMarkerColor(kBlue);
 	vgrPromptEnEffPerCell[0]->SetLineColor(kBlue);
@@ -1790,15 +2029,34 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	vgrDelayEnEffPerCell[0]->SetLineColor(kMagenta);
 	vgrDelayEnEffPerCell[0]->Draw("P");
 
+	vgrPromptEnEffPerCellET[0]->SetMarkerStyle(25);
+	vgrPromptEnEffPerCellET[0]->SetMarkerColor(kBlue);
+	vgrPromptEnEffPerCellET[0]->SetLineColor(kBlue);
+	vgrPromptEnEffPerCellET[0]->Draw("P");
+	vgrDelayEnEffPerCellET[0]->SetMarkerStyle(25);
+	vgrDelayEnEffPerCellET[0]->SetMarkerColor(kMagenta);
+	vgrDelayEnEffPerCellET[0]->SetLineColor(kMagenta);
+	vgrDelayEnEffPerCellET[0]->Draw("P");
+
 	vgrPosEffPerCell[0]->SetMarkerStyle(20);
 	vgrPosEffPerCell[0]->SetMarkerColor(8);
 	vgrPosEffPerCell[0]->SetLineColor(8);
 	vgrPosEffPerCell[0]->Draw("P");
 
+	vgrPosEffPerCellET[0]->SetMarkerStyle(24);
+	vgrPosEffPerCellET[0]->SetMarkerColor(8);
+	vgrPosEffPerCellET[0]->SetLineColor(8);
+	vgrPosEffPerCellET[0]->Draw("P");
+
 	vgrEffPerCell[0]->SetMarkerStyle(20);
 	vgrEffPerCell[0]->SetMarkerColor(kBlack);
 	vgrEffPerCell[0]->SetLineColor(kBlack);
 	vgrEffPerCell[0]->Draw("P");
+
+	vgrEffPerCellET[0]->SetMarkerStyle(24);
+	vgrEffPerCellET[0]->SetMarkerColor(kBlack);
+	vgrEffPerCellET[0]->SetLineColor(kBlack);
+	vgrEffPerCellET[0]->Draw("P");
 
 	TLegend *leg = new TLegend(0.78,0.78,0.98,0.98);
 	leg->AddEntry(vgrPromptPSDEffPerCell[0],"Prompt PSD","p");
@@ -1811,33 +2069,77 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cAllEffPerCell->SaveAs(Form("%s/grAllEffPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cEffPerCell = new TCanvas("cEffPerCell","Efficiency Per Cell",1);
+	gPad->SetGrid();
 	vgrEffPerCell[0]->SetTitle("Efficiency Per Cell;Cell;Eff");
 	vgrEffPerCell[0]->SetMarkerStyle(20);
 	vgrEffPerCell[0]->SetMarkerColor(kBlue);
 	vgrEffPerCell[0]->SetLineColor(kBlue);
 	vgrEffPerCell[0]->Draw("AP");
+	vgrEffPerCellET[0]->SetMarkerStyle(20);
+	vgrEffPerCellET[0]->SetMarkerColor(kRed);
+	vgrEffPerCellET[0]->SetLineColor(kRed);
+	vgrEffPerCellET[0]->Draw("P");
 	vgrEffPerCell[0]->Fit("pol0");
 	cEffPerCell->SaveAs(Form("%s/grEffPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoEnMeanPerCell = new TCanvas("cPoEnMeanPerCell","Po Energy Mean Per Cell",1);
-	vgrPoEnMeanPerCell[0]->SetTitle("Po Energy Mean Per Cell;Cell;Energy [MeVee]");
+	gPad->SetGrid();
+	vgrPoEnMeanPerCell[0]->SetTitle("Po Energy Mean Per Cell;Cell;Energy [keV]");
 	vgrPoEnMeanPerCell[0]->SetMarkerStyle(20);
 	vgrPoEnMeanPerCell[0]->SetMarkerColor(kBlue);
 	vgrPoEnMeanPerCell[0]->SetLineColor(kBlue);
 	vgrPoEnMeanPerCell[0]->Draw("AP");
+	vgrPoEnMeanPerCellET[0]->SetMarkerStyle(20);
+	vgrPoEnMeanPerCellET[0]->SetMarkerColor(kRed);
+	vgrPoEnMeanPerCellET[0]->SetLineColor(kRed);
+	vgrPoEnMeanPerCellET[0]->Draw("P");
 	vgrPoEnMeanPerCell[0]->Fit("pol0");
 	cPoEnMeanPerCell->SaveAs(Form("%s/PoEnMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoEnSigmaPerCell = new TCanvas("cPoEnSigmaPerCell","Po Energy Sigma Per Cell",1);
-	vgrPoEnSigmaPerCell[0]->SetTitle("Po Energy Sigma Per Cell;Cell;Sigma");
+	gPad->SetGrid();
+	vgrPoEnSigmaPerCell[0]->SetTitle("Po Energy Sigma Per Cell;Cell;Sigma [keV]");
 	vgrPoEnSigmaPerCell[0]->SetMarkerStyle(20);
 	vgrPoEnSigmaPerCell[0]->SetMarkerColor(kBlue);
 	vgrPoEnSigmaPerCell[0]->SetLineColor(kBlue);
 	vgrPoEnSigmaPerCell[0]->Draw("AP");
+	vgrPoEnSigmaPerCellET[0]->SetMarkerStyle(20);
+	vgrPoEnSigmaPerCellET[0]->SetMarkerColor(kRed);
+	vgrPoEnSigmaPerCellET[0]->SetLineColor(kRed);
+	vgrPoEnSigmaPerCellET[0]->Draw("P");
 	vgrPoEnSigmaPerCell[0]->Fit("pol0");
 	cPoEnSigmaPerCell->SaveAs(Form("%s/PoEnSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
+	TCanvas *cRelPoEnMeanPerCell = new TCanvas("cRelPoEnMeanPerCell","Po Energy Mean Per Cell",1);
+	gPad->SetGrid();
+	vgrRelPoEnMeanPerCell[0]->SetTitle("Relative Po Energy Mean Per Cell;Cell;Energy [keV]");
+	vgrRelPoEnMeanPerCell[0]->SetMarkerStyle(20);
+	vgrRelPoEnMeanPerCell[0]->SetMarkerColor(kBlue);
+	vgrRelPoEnMeanPerCell[0]->SetLineColor(kBlue);
+	vgrRelPoEnMeanPerCell[0]->Draw("AP");
+	vgrRelPoEnMeanPerCellET[0]->SetMarkerStyle(20);
+	vgrRelPoEnMeanPerCellET[0]->SetMarkerColor(kRed);
+	vgrRelPoEnMeanPerCellET[0]->SetLineColor(kRed);
+	vgrRelPoEnMeanPerCellET[0]->Draw("P");
+	vgrRelPoEnMeanPerCell[0]->Fit("pol0");
+	cRelPoEnMeanPerCell->SaveAs(Form("%s/RelPoEnMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
+	TCanvas *cRelPoEnSigmaPerCell = new TCanvas("cRelPoEnSigmaPerCell","Po Energy Sigma Per Cell",1);
+	gPad->SetGrid();
+	vgrRelPoEnSigmaPerCell[0]->SetTitle("Relative Po Energy Sigma Per Cell;Cell;Sigma [keV]");
+	vgrRelPoEnSigmaPerCell[0]->SetMarkerStyle(20);
+	vgrRelPoEnSigmaPerCell[0]->SetMarkerColor(kBlue);
+	vgrRelPoEnSigmaPerCell[0]->SetLineColor(kBlue);
+	vgrRelPoEnSigmaPerCell[0]->Draw("AP");
+	vgrRelPoEnSigmaPerCellET[0]->SetMarkerStyle(20);
+	vgrRelPoEnSigmaPerCellET[0]->SetMarkerColor(kRed);
+	vgrRelPoEnSigmaPerCellET[0]->SetLineColor(kRed);
+	vgrRelPoEnSigmaPerCellET[0]->Draw("P");
+	vgrRelPoEnSigmaPerCell[0]->Fit("pol0");
+	cRelPoEnSigmaPerCell->SaveAs(Form("%s/RelPoEnSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
 	TCanvas *cRnPoPSDMeanPerCell = new TCanvas("cRnPoPSDMeanPerCell","RnPo PSD Mean Per Cell",1);
+	gPad->SetGrid();
 	vgrRnPSDMeanPerCell[0]->SetTitle("RnPo PSD Mean Per Cell;Cell;PSD [arb]");
 	vgrRnPSDMeanPerCell[0]->SetMarkerStyle(20);
 	vgrRnPSDMeanPerCell[0]->SetMarkerColor(kBlue);
@@ -1850,29 +2152,58 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	cRnPoPSDMeanPerCell->SaveAs(Form("%s/RnPoPSDMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cRnPoDzMeanPerCell = new TCanvas("cRnPoDzMeanPerCell","RnPo Dz Mean Per Cell",1);
+	gPad->SetGrid();
 	vgrRnPoDzMeanPerCell[0]->SetTitle("RnPo dz Mean Per Cell;Cell;dz [mm]");
 	vgrRnPoDzMeanPerCell[0]->SetMarkerStyle(20);
 	vgrRnPoDzMeanPerCell[0]->SetMarkerColor(kBlue);
 	vgrRnPoDzMeanPerCell[0]->SetLineColor(kBlue);
 	vgrRnPoDzMeanPerCell[0]->Draw("AP");
+	vgrRnPoDzMeanPerCellET[0]->SetMarkerStyle(20);
+	vgrRnPoDzMeanPerCellET[0]->SetMarkerColor(kRed);
+	vgrRnPoDzMeanPerCellET[0]->SetLineColor(kRed);
+	vgrRnPoDzMeanPerCellET[0]->Draw("P");
 	vgrRnPoDzMeanPerCell[0]->Fit("pol0");
 	cRnPoDzMeanPerCell->SaveAs(Form("%s/RnPoDzMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cRnPoDzSigmaPerCell = new TCanvas("cRnPoDzSigmaPerCell","RnPo Dz Sigma Per Cell",1);
+	gPad->SetGrid();
 	vgrRnPoDzSigmaPerCell[0]->SetTitle("RnPo dz Sigma Per Cell;Cell;Sigma");
 	vgrRnPoDzSigmaPerCell[0]->SetMarkerStyle(20);
 	vgrRnPoDzSigmaPerCell[0]->SetMarkerColor(kBlue);
 	vgrRnPoDzSigmaPerCell[0]->SetLineColor(kBlue);
 	vgrRnPoDzSigmaPerCell[0]->Draw("AP");
+	vgrRnPoDzSigmaPerCellET[0]->SetMarkerStyle(20);
+	vgrRnPoDzSigmaPerCellET[0]->SetMarkerColor(kRed);
+	vgrRnPoDzSigmaPerCellET[0]->SetLineColor(kRed);
+	vgrRnPoDzSigmaPerCellET[0]->Draw("P");
 	vgrRnPoDzSigmaPerCell[0]->Fit("pol0");
 	cRnPoDzSigmaPerCell->SaveAs(Form("%s/RnPoDzSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
+	TCanvas *cPoPosMeanPerCell = new TCanvas("cPoPosMeanPerCell","Po Position Mean Per Cell",1);
+	gPad->SetGrid();
+	vgrPoPosMeanPerCell[0]->SetTitle("Po Position Mean Per Cell;Cell;Mean");
+	vgrPoPosMeanPerCell[0]->SetMarkerStyle(20);
+	vgrPoPosMeanPerCell[0]->SetMarkerColor(kBlue);
+	vgrPoPosMeanPerCell[0]->SetLineColor(kBlue);
+	vgrPoPosMeanPerCell[0]->Draw("AP");
+	vgrPoPosMeanPerCellET[0]->SetMarkerStyle(20);
+	vgrPoPosMeanPerCellET[0]->SetMarkerColor(kRed);
+	vgrPoPosMeanPerCellET[0]->SetLineColor(kRed);
+	vgrPoPosMeanPerCellET[0]->Draw("P");
+	vgrPoPosMeanPerCell[0]->Fit("pol0");
+	cPoPosMeanPerCell->SaveAs(Form("%s/PoPosMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
 	TCanvas *cPoPosSigmaPerCell = new TCanvas("cPoPosSigmaPerCell","Po Position Sigma Per Cell",1);
-	vgrPoPosSigmaPerCell[0]->SetTitle("Po Positiong Sigma Per Cell;Cell;Sigma");
+	gPad->SetGrid();
+	vgrPoPosSigmaPerCell[0]->SetTitle("Po Position Sigma Per Cell;Cell;Sigma");
 	vgrPoPosSigmaPerCell[0]->SetMarkerStyle(20);
 	vgrPoPosSigmaPerCell[0]->SetMarkerColor(kBlue);
 	vgrPoPosSigmaPerCell[0]->SetLineColor(kBlue);
 	vgrPoPosSigmaPerCell[0]->Draw("AP");
+	vgrPoPosSigmaPerCellET[0]->SetMarkerStyle(20);
+	vgrPoPosSigmaPerCellET[0]->SetMarkerColor(kRed);
+	vgrPoPosSigmaPerCellET[0]->SetLineColor(kRed);
+	vgrPoPosSigmaPerCellET[0]->Draw("P");
 	vgrPoPosSigmaPerCell[0]->Fit("pol0");
 	cPoPosSigmaPerCell->SaveAs(Form("%s/PoPosSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 	}
