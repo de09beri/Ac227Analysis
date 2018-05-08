@@ -546,6 +546,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		//--------------------------------------------------------------------------
 		//Subtract prompt-delay and prompt-BG position histograms
 		TH1F *hPoPos = (TH1F*)vhSelectDelayPos[i]->Clone();
+		hPoPos->SetName("hPoPos");
 		hPoPos->Sumw2();
 		hPoPos->Add(vhBGDelayPos[i],-1);	
 
@@ -907,6 +908,7 @@ cout<<hSelectDt_AllCells->GetEntries()<<" "<<hBGDt_AllCells->GetEntries()<<" "<<
 	//--------------------------------------------------------------------------
 	//Subtract prompt-delay and prompt-BG position histograms
 	TH1F *hPoPos_AllCells = (TH1F*)hSelectDelayPos_AllCells->Clone();
+	hPoPos_AllCells->SetName("hPoPos_AllCells");
 	hPoPos_AllCells->Sumw2();
 	hPoPos_AllCells->Add(hBGDelayPos_AllCells,-1);	
 
@@ -1028,6 +1030,7 @@ cout<<hSelectDt_AllCells->GetEntries()<<" "<<hBGDt_AllCells->GetEntries()<<" "<<
 	gStyle->SetOptFit(1111);
 
 	TH2F* hRnPoPSDvsEn = (TH2F*)hSelectPSDvsEn->Clone();
+	hRnPoPSDvsEn->SetName("hRnPoPSDvsEn");
 	hRnPoPSDvsEn->Add(hBGPSDvsEn,-1);
 
 	TCanvas *cSelectPSDvsEn = new TCanvas("cSelectPSDvsEn","cSelectPSDvsEn",1);
@@ -1043,6 +1046,7 @@ cout<<hSelectDt_AllCells->GetEntries()<<" "<<hBGDt_AllCells->GetEntries()<<" "<<
 	hRnPoPSDvsEn->Draw("colz");	
 
 	TH2F* hPoEnVsRnEn = (TH2F*)hSelectDelayEnVsPromptEn->Clone();
+	hPoEnVsRnEn->SetName("hPoEnVsRnEn");
 	hPoEnVsRnEn->Add(hBGDelayEnVsPromptEn,-1);
 
 	TCanvas *cPoEnVsRnEn = new TCanvas("cPoEnVsRnEn","cPoEnVsRnEn",1200,1200);
@@ -1057,6 +1061,7 @@ cout<<hSelectDt_AllCells->GetEntries()<<" "<<hBGDt_AllCells->GetEntries()<<" "<<
 	gPad->SetGrid();
 	cRnPoDtAll->SetLogy();
 	hSelectDt_AllCells->SetMinimum(1);
+	hSelectDt_AllCells->SetMaximum(1e5);
 	hSelectDt_AllCells->SetLineColor(kBlue);
 	hSelectDt_AllCells->SetTitle("All Cells: Dt of RnPo Events");
 	hSelectDt_AllCells->GetXaxis()->SetRangeUser(0,selectDtMax);
@@ -1189,6 +1194,7 @@ cout<<hSelectDt_AllCells->GetEntries()<<" "<<hBGDt_AllCells->GetEntries()<<" "<<
 	leg->Draw();
 
 	TH1F* hRnPoSeg = (TH1F*)hRnPoSelectSeg->Clone();
+	hRnPoSeg->SetName("hRnPoSeg");
 	hRnPoSeg->Sumw2();
 	hRnPoSeg->Add(hRnPoBGSeg,-1);
 
@@ -1967,7 +1973,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	for(int i=0;i<NUMCELLS;i++){
 		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
 		if(!exclude){
-		double relRate = vRate[0][i]/avgRate;
+		double relRate = (vRate[0][i]*1e6)/avgRate;
 		double relRateErr = relRate * sqrt(pow(vRate[1][i]/vRate[0][i],2)+pow(avgRateErr/avgRate,2)); 
 		vgrRelRatePerCell[0]->SetPoint(grPt,i,relRate);
 		vgrRelRatePerCell[0]->SetPointError(grPt,0,relRateErr);
@@ -2000,7 +2006,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	TCanvas *cAllEffPerCell = new TCanvas("cAllEffPerCell","AllEfficiency Per Cell",1);
 	gPad->SetGrid();
 	vgrPromptPSDEffPerCell[0]->SetTitle("Cut Efficiency Per Cell;Cell;Eff");
-	vgrPromptPSDEffPerCell[0]->GetYaxis()->SetRangeUser(0.97,1.01);
+	vgrPromptPSDEffPerCell[0]->GetYaxis()->SetRangeUser(0.89,1.02);
 
 	vgrPromptPSDEffPerCell[0]->SetMarkerStyle(20);
 	vgrPromptPSDEffPerCell[0]->SetMarkerColor(kBlue);
@@ -2012,11 +2018,9 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	vgrDelayPSDEffPerCell[0]->Draw("P");
 
 	vgrPromptPSDEffPerCellET[0]->SetMarkerStyle(24);
-	vgrPromptPSDEffPerCellET[0]->SetMarkerColor(kBlue);
 	vgrPromptPSDEffPerCellET[0]->SetLineColor(kBlue);
 	vgrPromptPSDEffPerCellET[0]->Draw("P");
 	vgrDelayPSDEffPerCellET[0]->SetMarkerStyle(24);
-	vgrDelayPSDEffPerCellET[0]->SetMarkerColor(kMagenta);
 	vgrDelayPSDEffPerCellET[0]->SetLineColor(kMagenta);
 	vgrDelayPSDEffPerCellET[0]->Draw("P");
 
@@ -2030,11 +2034,9 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	vgrDelayEnEffPerCell[0]->Draw("P");
 
 	vgrPromptEnEffPerCellET[0]->SetMarkerStyle(25);
-	vgrPromptEnEffPerCellET[0]->SetMarkerColor(kBlue);
 	vgrPromptEnEffPerCellET[0]->SetLineColor(kBlue);
 	vgrPromptEnEffPerCellET[0]->Draw("P");
 	vgrDelayEnEffPerCellET[0]->SetMarkerStyle(25);
-	vgrDelayEnEffPerCellET[0]->SetMarkerColor(kMagenta);
 	vgrDelayEnEffPerCellET[0]->SetLineColor(kMagenta);
 	vgrDelayEnEffPerCellET[0]->Draw("P");
 
@@ -2044,7 +2046,6 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	vgrPosEffPerCell[0]->Draw("P");
 
 	vgrPosEffPerCellET[0]->SetMarkerStyle(24);
-	vgrPosEffPerCellET[0]->SetMarkerColor(8);
 	vgrPosEffPerCellET[0]->SetLineColor(8);
 	vgrPosEffPerCellET[0]->Draw("P");
 
@@ -2054,7 +2055,6 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	vgrEffPerCell[0]->Draw("P");
 
 	vgrEffPerCellET[0]->SetMarkerStyle(24);
-	vgrEffPerCellET[0]->SetMarkerColor(kBlack);
 	vgrEffPerCellET[0]->SetLineColor(kBlack);
 	vgrEffPerCellET[0]->Draw("P");
 
@@ -2071,6 +2071,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	TCanvas *cEffPerCell = new TCanvas("cEffPerCell","Efficiency Per Cell",1);
 	gPad->SetGrid();
 	vgrEffPerCell[0]->SetTitle("Efficiency Per Cell;Cell;Eff");
+	vgrEffPerCell[0]->GetYaxis()->SetRangeUser(0.89,1.02);
 	vgrEffPerCell[0]->SetMarkerStyle(20);
 	vgrEffPerCell[0]->SetMarkerColor(kBlue);
 	vgrEffPerCell[0]->SetLineColor(kBlue);
@@ -2167,7 +2168,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 
 	TCanvas *cRnPoDzSigmaPerCell = new TCanvas("cRnPoDzSigmaPerCell","RnPo Dz Sigma Per Cell",1);
 	gPad->SetGrid();
-	vgrRnPoDzSigmaPerCell[0]->SetTitle("RnPo dz Sigma Per Cell;Cell;Sigma");
+	vgrRnPoDzSigmaPerCell[0]->SetTitle("RnPo dz Sigma Per Cell;Cell;Sigma [mm]");
 	vgrRnPoDzSigmaPerCell[0]->SetMarkerStyle(20);
 	vgrRnPoDzSigmaPerCell[0]->SetMarkerColor(kBlue);
 	vgrRnPoDzSigmaPerCell[0]->SetLineColor(kBlue);
@@ -2181,7 +2182,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 
 	TCanvas *cPoPosMeanPerCell = new TCanvas("cPoPosMeanPerCell","Po Position Mean Per Cell",1);
 	gPad->SetGrid();
-	vgrPoPosMeanPerCell[0]->SetTitle("Po Position Mean Per Cell;Cell;Mean");
+	vgrPoPosMeanPerCell[0]->SetTitle("Po Position Mean Per Cell;Cell;Mean [mm]");
 	vgrPoPosMeanPerCell[0]->SetMarkerStyle(20);
 	vgrPoPosMeanPerCell[0]->SetMarkerColor(kBlue);
 	vgrPoPosMeanPerCell[0]->SetLineColor(kBlue);
@@ -2193,9 +2194,9 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	vgrPoPosMeanPerCell[0]->Fit("pol0");
 	cPoPosMeanPerCell->SaveAs(Form("%s/PoPosMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
-	TCanvas *cPoPosSigmaPerCell = new TCanvas("cPoPosSigmaPerCell","Po Position Sigma Per Cell",1);
+	TCanvas *cPoPosSigmaPerCell = new TCanvas("cPoPosSigmaPerCell","Po Position RMS Per Cell",1);
 	gPad->SetGrid();
-	vgrPoPosSigmaPerCell[0]->SetTitle("Po Position Sigma Per Cell;Cell;Sigma");
+	vgrPoPosSigmaPerCell[0]->SetTitle("Po Position RMS Per Cell;Cell;RMS [mm]");
 	vgrPoPosSigmaPerCell[0]->SetMarkerStyle(20);
 	vgrPoPosSigmaPerCell[0]->SetMarkerColor(kBlue);
 	vgrPoPosSigmaPerCell[0]->SetLineColor(kBlue);
