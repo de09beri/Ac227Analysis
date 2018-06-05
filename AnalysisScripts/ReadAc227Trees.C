@@ -1,5 +1,6 @@
 #include <fstream>
 
+#include "PROSPECT_Style.cc"
 #include "TROOT.h"
 #include "TF1.h"
 #include "TH1F.h"
@@ -28,9 +29,11 @@ using namespace std;
 
 tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>, vector<vector<double>>>ReadAc227Trees(const int NUMCELLS, int IDX, int NUMTREES, int nLoop, int PLOTFLAG, double PSDCUTLOW, double PSDCUTHIGH){
 
-	double ZFIDCUT = 448;
+//	double ZFIDCUT = 448;
+	double ZFIDCUT = 1000;
 
-	int ExcludeCellArr[28] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
+	const int NUMEXCLUDECELLS = 31;
+	int ExcludeCellArr[NUMEXCLUDECELLS] = {0,1,2,3,4,5,6,9,10,11,12,13,18,21,23,24,27,32,34,40,44,52,68,79,86,102,115,122,127,130,139};
 	bool exclude;
 	gStyle->SetPalette(kTemperatureMap);
 
@@ -42,6 +45,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	printf("Number of cells: %i \n",NUMCELLS);
 
 	TChain AcChain("TAc");
+
 	AcChain.Add(Form("%s/WetCommissioning/Series015_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series016_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series017_AcTrees.root",getenv("P2X_ANALYZED")));
@@ -50,13 +54,22 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	AcChain.Add(Form("%s/WetCommissioning/Series020_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series021_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series022_AcTrees.root",getenv("P2X_ANALYZED")));
-	//AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set0.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set1.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set2.root",getenv("P2X_ANALYZED")));
-	//AcChain.Add(Form("%s/180316_Rampdown/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+
 	AcChain.Add(Form("%s/180316_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series001_AcTrees.root",getenv("P2X_ANALYZED")));
+
+	AcChain.Add(Form("%s/180417_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+
+	AcChain.Add(Form("%s/180420_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+
+	AcChain.Add(Form("%s/180501_ReactorOn/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+	AcChain.Add(Form("%s/180501_ReactorOn/Series001_AcTrees.root",getenv("P2X_ANALYZED")));
+	AcChain.Add(Form("%s/180501_ReactorOn/Series002_AcTrees.root",getenv("P2X_ANALYZED")));
+	AcChain.Add(Form("%s/180501_ReactorOn/Series004_AcTrees.root",getenv("P2X_ANALYZED")));
+
 
 	Double_t Ac_tstamp ;
 	Float_t  Ac_promptECut[2];
@@ -138,6 +151,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	vector<TH1F*> vhSelectDelayE,    vhBGDelayE,    vhDelayE;
 	vector<TH1F*> vhSelectDz,        vhBGDz,        vhRnPoDz;
 	vector<TH1F*> vhSelectDelayPos,  vhBGDelayPos,  vhDelayPos;    	
+	vector<TH2F*> vhSelectPSDvsZ,    vhBGPSDvsZ,    vhRnPoPSDvsZ;
+	vector<TH2F*> vhSelectEvsZ,      vhBGEvsZ,      vhRnPoEvsZ;
 
 	double POLIFETIME = 2.57;	//[ms]
 	double TIMECUT = 0.5, TIMEWINDOW = 5.0*POLIFETIME, TIMEOFFSET = 10.0*POLIFETIME;	//[ms]
@@ -191,6 +206,18 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		TH1F* hNewBGDelayPos     = new TH1F(Form("hBGDelayPos_%i",i),Form("Cell %i: Position of BG Delay Events;z [mm];Counts",i),numPosBins,posMin,posMax);
 		vhSelectDelayPos.push_back(hNewSelectDelayPos);
 		vhBGDelayPos.push_back(hNewBGDelayPos);
+
+		TH2F* hNewSelectPSDvsZ = new TH2F(Form("hSelectPSDvsZ_%i",i),Form("Cell %i: PSD vs Position Selection Events;z [mm];PSD [arb]",i),200,posMin,posMax,200,PSDMin,PSDMax);
+		TH2F* hNewBGPSDvsZ = new TH2F(Form("hBGPSDvsZ_%i",i),Form("Cell %i: PSD vs Position BG Events;z [mm];PSD [arb]",i),200,posMin,posMax,200,PSDMin,PSDMax);
+		vhSelectPSDvsZ.push_back(hNewSelectPSDvsZ);
+		vhBGPSDvsZ.push_back(hNewBGPSDvsZ);
+
+		TH2F* hNewSelectEvsZ = new TH2F(Form("hSelectEvsZ_%i",i),Form("Cell %i: Energy vs Position Selection Events;z [mm];E [MeVee]",i),200,posMin,posMax,200,EMin,EMax);
+		TH2F* hNewBGEvsZ = new TH2F(Form("hBGEvsZ_%i",i),Form("Cell %i: Energy vs Position BG Events;z [mm];E [MeVee]",i),200,posMin,posMax,200,EMin,EMax);
+		vhSelectEvsZ.push_back(hNewSelectEvsZ);
+		vhBGEvsZ.push_back(hNewBGEvsZ);
+		
+
 	}
 
 	TH1F* hSelectDt_AllCells = new TH1F("hSelectDt_AllCells","All Cells: Dt of Selection Events;dt [ms];Counts",numDtBins,selectDtMin,selectDtMax);
@@ -248,11 +275,12 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	double promptTime, promptPSD;
 
 	for(int i=IDX;i<nAcEvents;i++){
+		if(i%10000==0) printf("Event: %d \n",i);
+		
 		AcChain.GetEvent(i);
 
 		promptPSD = Ac_PSD[0];
-		if(promptPSD<PSDCUTLOW || promptPSD>PSDCUTHIGH) goto skipEntry;
-
+		if(promptPSD<PSDCUTLOW || promptPSD>PSDCUTHIGH || Ac_seg[0]>200) goto skipEntry;
 
 		promptTime = Ac_t[0]*CONVERTnsTOms;
 
@@ -304,13 +332,19 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 			hSelectPSDvsEn->Fill(Ac_E[1],Ac_PSD[1]);
 
 			hSelectDelayEnVsPromptEn->Fill(Ac_E[0],Ac_E[1]);
+
+			vhSelectPSDvsZ[segNum]->Fill(Ac_z[0],Ac_PSD[0]);
+			vhSelectPSDvsZ[segNum]->Fill(Ac_z[1],Ac_PSD[1]);
+
+			vhSelectEvsZ[segNum]->Fill(Ac_z[0],Ac_E[0]);
+			vhSelectEvsZ[segNum]->Fill(Ac_z[1],Ac_E[1]);
 		}
 
 		//check if there is a background delay event
 		if(Ac_evt[2]!=0 && !exclude && Ac_PSD[2]>PSDCUTLOW && Ac_PSD[2]<PSDCUTHIGH && abs(Ac_z[2])<ZFIDCUT){
 			segNum = Ac_seg[2];	
 			hRnPoBGSeg->Fill(segNum);	
-	
+
 			BGDt = (Ac_t[2] - Ac_t[0])*CONVERTnsTOms;
 			vhBGDt[segNum]->Fill(BGDt);
 			hBGDt_AllCells->Fill(BGDt);
@@ -336,6 +370,12 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 			hBGPSDvsEn->Fill(Ac_E[2],Ac_PSD[2]);
 
 			hBGDelayEnVsPromptEn->Fill(Ac_E[0],Ac_E[2]);
+
+			vhBGPSDvsZ[segNum]->Fill(Ac_z[0],Ac_PSD[0]);
+			vhBGPSDvsZ[segNum]->Fill(Ac_z[2],Ac_PSD[2]);
+
+			vhBGEvsZ[segNum]->Fill(Ac_z[0],Ac_E[0]);
+			vhBGEvsZ[segNum]->Fill(Ac_z[2],Ac_E[2]);
 		}
 
 		skipEntry:
@@ -416,6 +456,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	for(int i=0;i<NUMCELLS;i++){		
 		rate = 0.0,    N = 0.0,    lifetime = 0.0,    promptPSDEff = 0.0,    delayPSDEff = 0.0,     promptEnEff = 0.0,    delayEnEff = 0.0,    posEff = 0.0,    totEff = 0.0,    PoEnMean = 0.0, PoPSDMean = 0.0;
 		rateErr = 0.0, NErr = 0.0, lifetimeErr = 0.0, promptPSDEffErr = 0.0, delayPSDEffErr = 0.0,  promptEnEffErr = 0.0, delayEnEffErr = 0.0, posEffErr = 0.0, totEffErr = 0.0, PoEnMeanErr = 0.0, PoPSDMeanErr = 0.0;
+
+//		if(PLOTFLAG==1){
 
 		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
 		if(!exclude){
@@ -534,6 +576,17 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		hPoPos->Add(vhBGDelayPos[i],-1);	
 
 		//--------------------------------------------------------------------------
+		//Subtract PSD vs Z and E vs Z plots
+		TH2F* hRnPoPSDvsZ = (TH2F*)vhSelectPSDvsZ[i]->Clone();
+		hRnPoPSDvsZ->SetNameTitle(Form("hRnPoPSDvsZ_%i",i),Form("Cell %i: RnPo PSD vs Z",i));
+		hRnPoPSDvsZ->Add(vhBGPSDvsZ[i],-1);
+		vhRnPoPSDvsZ.push_back(hRnPoPSDvsZ);
+
+		TH2F* hRnPoEvsZ = (TH2F*)vhSelectEvsZ[i]->Clone();
+		hRnPoEvsZ->SetNameTitle(Form("hRnPoEvsZ_%i",i),Form("Cell %i: RnPo Energy vs Z",i));
+		hRnPoEvsZ->Add(vhBGEvsZ[i],-1);
+		vhRnPoEvsZ.push_back(hRnPoEvsZ);
+		//--------------------------------------------------------------------------
 		//Calculate efficiencies and Ac227 rate
 
 		//Prompt PSD Eff
@@ -610,7 +663,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		TLegend *leg = nullptr;
 
 		//if(i==110 || i==109 || i==111 || i==124 || i==96 || i==123 || i==125 || i==95 || i==97){
-		if(i==300){
+		if(i<300){
 		TCanvas *cRnPoDt = new TCanvas(Form("cRnPoDt_%i",i),"cRnPoDt",1);
 		vhSelectDt[i]->SetLineColor(kBlue);
 		vhSelectDt[i]->SetTitle(Form("Cell %i: Dt of RnPo Events",i));
@@ -737,19 +790,48 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 		leg->AddEntry(fDzGaus,"Fit","l");
 		leg->Draw();
 
+
+		setup_PROSPECT_style();
+	    gROOT->ForceStyle();
+
+		TCanvas *cAllPSDvsZ = new TCanvas(Form("cPSDvsZ_%i",i),"cPSDvsZ",1);
+		TH2F* hAllPSDvsZ = (TH2F*)vhSelectPSDvsZ[i]->Clone();
+		hAllPSDvsZ->Add(vhBGPSDvsZ[i]);
+		hAllPSDvsZ->Draw("colz");
+
+		TCanvas *cAllEvsZ = new TCanvas(Form("cEvsZ_%i",i),"cEvsZ",1);
+		TH2F* hAllEvsZ = (TH2F*)vhSelectEvsZ[i]->Clone();
+		hAllEvsZ->Add(vhBGEvsZ[i]);
+		hAllEvsZ->Draw("colz");
+
+		TCanvas *cRnPoPSDvsZ = new TCanvas(Form("cRnPoPSDvsZ_%i",i),"cRnPoPSDvsZ",1);
+		hRnPoPSDvsZ->Draw("colz");		
+	
+		TCanvas *cRnPoEvsZ = new TCanvas(Form("cRnPoEvsZ_%i",i),"cRnPoEvsZ",1);
+		hRnPoEvsZ->Draw("colz");
+
 		cRnPoDt->SaveAs(Form("%s/Cell%i_RnPoDt_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));	
 		cRnPoPSD->SaveAs(Form("%s/Cell%i_RnPoPSD_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));
 		cRnPoE->SaveAs(Form("%s/Cell%i_RnPoE_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));
 		cRnPoDz->SaveAs(Form("%s/Cell%i_RnPoDz_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));
+		cAllPSDvsZ->SaveAs(Form("%s/Cell%i_AllPSDvsZ_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));
+		cAllEvsZ->SaveAs(Form("%s/Cell%i_AllEvsZ_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));
+		cRnPoPSDvsZ->SaveAs(Form("%s/Cell%i_RnPoPSDvsZ_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));
+		cRnPoEvsZ->SaveAs(Form("%s/Cell%i_RnPoEvsZ_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),i,nLoop));
 
 		delete cRnPoDt;
 		delete cRnPoPSD;
 		delete cRnPoE;
 		delete cRnPoDz;
+		delete cAllPSDvsZ;
+		delete cAllEvsZ;
+		delete cRnPoPSDvsZ;
+		delete cRnPoEvsZ;
 		}
 
 		}
 
+//		}	//if(PLOTFLAG==1)
 		vRate.push_back(rate);
 		vRateErr.push_back(rateErr);
 		vN.push_back(N);
@@ -858,9 +940,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	delayEFitMin = 0.6; delayEFitMax = 1.1;
 
 	//Fit prompt and delay energy histograms
-	fGaus0 = new TF1("fGaus0","gaus",0.5,0.85);
-	fGaus1 = new TF1("fGaus1","gaus",0.8,1.1);
-	fPromptETot = new TF1("fPromptETot","gaus(0) + gaus(3)",0.5,1.2);
+	fGaus0 = new TF1("fGaus0","gaus",0.55,0.8);
+	fGaus1 = new TF1("fGaus1","gaus",0.82,1.1);
+	fPromptETot = new TF1("fPromptETot","gaus(0) + gaus(3)",0.55,1.1);
 	
 	hPromptE_AllCells->Fit(fGaus0,"RQ0");
 	hPromptE_AllCells->Fit(fGaus1,"RQ0+");
@@ -909,6 +991,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	//Prompt Energy Eff
 	promptEnEffAllCells = fPromptETot->Integral(promptECutLow,promptECutHigh)/fPromptETot->Integral(EMin,EMax);
 	promptEnEffErrAllCells = sqrt((promptEnEffAllCells*(1.0-promptEnEffAllCells))/hPromptE_AllCells->GetEntries());
+
+cout<<"Energy eff: "<<promptEnEffAllCells<<" +/- "<<promptEnEffErrAllCells<<endl;
 
 	//Delay Energy Eff
 	delayEnEffAllCells = fDelayEGaus->Integral(delayECutLow,delayECutHigh)/fDelayEGaus->Integral(EMin,EMax);
@@ -1133,6 +1217,12 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	hPromptE_AllCells->SetLineWidth(2);
 	hPromptE_AllCells->Draw("sames");
 	fPromptETot->Draw("sames");
+
+	fGaus0->SetLineColor(8);	
+	fGaus0->Draw("sames");
+	fGaus1->SetLineColor(kBlack);
+	fGaus1->Draw("sames");
+
 	gPad->Update();	
 	stp = (TPaveStats*)hPromptE_AllCells->FindObject("stats");
 	stp->SetX1NDC(0.7); 
@@ -1192,7 +1282,7 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 */
 	hRnPoSeg->SetLineColor(1);
 	//hRnPoSeg->Draw("sames");
-	hRnPoSeg->SetMaximum(9000);
+//	hRnPoSeg->SetMaximum(9000);
 	hRnPoSeg->SetLineColor(kBlue);
 	hRnPoSeg->Draw("HIST");
 	hRnPoSeg->Fit("pol0");
@@ -1215,6 +1305,20 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	cRnPoPosAll->SaveAs(Form("%s/AllCells_RnPoPos_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),nLoop));
 	cRnPoSeg->SaveAs(Form("%s/RnPoSeg_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),nLoop));
 
+	TFile *saveHistsFile = new TFile("AD_PhysNeutrino_Hists_noZFid_TotDetector.root","RECREATE");
+	hRnPoPSDvsEn->Write();
+	hPoEnVsRnEn->Write();
+	hSelectDt_AllCells->Write();
+	hBGDt_AllCells->Write();
+	hRnPoDt_AllCells->Write();
+	hPromptPSD_AllCells->Write();
+	hDelayPSD_AllCells->Write();		
+	hPromptE_AllCells->Write();
+	hDelayE_AllCells->Write();
+	hRnPoDz_AllCells->Write();
+	hPoPos_AllCells->Write();
+	hRnPoSeg->Write();
+	saveHistsFile->Close();	
 
 	delete cRnPoPSDvsEn;
 	delete cPoEnVsRnEn;
@@ -1274,7 +1378,9 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 	vvPoPosSigma.push_back(vPoPosSigmaErr);	
 
 	if(PLOTFLAG==1){
-	rateTree.Write("",TObject::kOverwrite);
+	rateTreeFile.cd();
+	//rateTree.Write("",TObject::kOverwrite);
+	rateTree.Write();
 	rateTreeFile.Close();
 	}
 
@@ -1283,8 +1389,8 @@ tuple<int, double, vector<vector<double>>, vector<vector<double>>, vector<vector
 
 void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLOW, double PSDCUTHIGH){
 
-	const int NUMEXCLUDECELLS = 28;
-	int ExcludeCellArr[NUMEXCLUDECELLS] = {0,1,2,3,4,5,6,9,11,12,13,18,21,23,24,27,32,40,44,68,73,79,102,107,122,127,130,139};
+	const int NUMEXCLUDECELLS = 31;
+	int ExcludeCellArr[NUMEXCLUDECELLS] = {0,1,2,3,4,5,6,9,10,11,12,13,18,21,23,24,27,32,34,40,44,52,68,79,86,102,115,122,127,130,139};
 	bool exclude;
 
 	const int NUMETCELLS = 46, NUMEXCLUDEETCELLS = 13 ;
@@ -1296,6 +1402,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	//--------------------------------------------------------------------------
 	//Figure number of bins for histograms based on time of all trees and chosen time segment
 	TChain AcChain("TAc");
+
 	AcChain.Add(Form("%s/WetCommissioning/Series015_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series016_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series017_AcTrees.root",getenv("P2X_ANALYZED")));
@@ -1304,13 +1411,21 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	AcChain.Add(Form("%s/WetCommissioning/Series020_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series021_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series022_AcTrees.root",getenv("P2X_ANALYZED")));
-	//AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set0.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set1.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/WetCommissioning/Series023_AcTrees_Set2.root",getenv("P2X_ANALYZED")));
-	//AcChain.Add(Form("%s/180316_Rampdown/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+
 	AcChain.Add(Form("%s/180316_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
 	AcChain.Add(Form("%s/180316_Background/Series001_AcTrees.root",getenv("P2X_ANALYZED")));
+
+	AcChain.Add(Form("%s/180417_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+
+	AcChain.Add(Form("%s/180420_Background/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+
+	AcChain.Add(Form("%s/180501_ReactorOn/Series000_AcTrees.root",getenv("P2X_ANALYZED")));
+	AcChain.Add(Form("%s/180501_ReactorOn/Series001_AcTrees.root",getenv("P2X_ANALYZED")));
+	AcChain.Add(Form("%s/180501_ReactorOn/Series002_AcTrees.root",getenv("P2X_ANALYZED")));
+	AcChain.Add(Form("%s/180501_ReactorOn/Series004_AcTrees.root",getenv("P2X_ANALYZED")));
 
 	Double_t Ac_tstamp;
 	Double_t Ac_t[3];
@@ -1343,7 +1458,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	countNumTrees = countNumTrees + 1;
 	int numBins = ceil((double)countNumTrees/(double)NUMTREES);	
 
-	if(PLOTFLAG==2)	numBins = 10;
+	if(PLOTFLAG==2)	numBins = 57;
 	printf("Number of trees: %d Number of bins: %d \n",countNumTrees,numBins);
 
 	//--------------------------------------------------------------------------
@@ -1353,7 +1468,7 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 
 	TH2F* hRatePerCell = new TH2F("hRatePerCell","Rate Per Cell;;;Rate [mHz]",14,0,14,11,0,11);
 	TH2F* hRelRatePerCell = new TH2F("hRelRatePerCell","Relative Rate Per Cell;;;Relative Rate",14,0,14,11,0,11);
-	
+
 	//--------------------------------------------------------------------------
 	//Set up graphs
 	double x[numBins], y[numBins];
@@ -1362,7 +1477,13 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	TGraphErrors *grRate_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grN_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grLifetime_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
-	TGraphErrors *grEnEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+
+	TGraphErrors *grPromptEnEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grDelayEnEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grPromptPSDEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grDelayPSDEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grPosEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+
 	TGraphErrors *grTotEff_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoEnMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
 	TGraphErrors *grPoEnSigma_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
@@ -1376,13 +1497,15 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 	double xPerCell[NumActiveCells], xErrPerCell[NumActiveCells];
 
 	vector<TGraphErrors*> vgrRatePerCell, vgrRelRatePerCell, vgrPromptPSDEffPerCell, vgrDelayPSDEffPerCell, vgrPromptEnEffPerCell, vgrDelayEnEffPerCell, vgrPosEffPerCell, vgrEffPerCell;
-	vector<TGraphErrors*> vgrPoEnMeanPerCell, vgrPoEnSigmaPerCell, vgrRelPoEnMeanPerCell, vgrRelPoEnSigmaPerCell, vgrRnPSDMeanPerCell, vgrPoPSDMeanPerCell, vgrRnPoDzMeanPerCell, vgrRnPoDzSigmaPerCell, vgrPoPosMeanPerCell, vgrPoPosSigmaPerCell;
+	vector<TGraphErrors*> vgrPoEnMeanPerCell, vgrPoEnSigmaPerCell, vgrRelPoEnMeanPerCell, vgrRelPoEnSigmaPerCell, vgrRnPSDMeanPerCell, vgrPoPSDMeanPerCell, vgrRnPoDzMeanPerCell, vgrRnPoDzSigmaPerCell, vgrPoPosMeanPerCell, vgrPoPosSigmaPerCell, vgrRelRnPoDzMeanPerCell;
 
 	int NumActiveCellsET = NUMETCELLS - NUMEXCLUDEETCELLS;
 	double xPerCellET[NumActiveCellsET], xErrPerCellET[NumActiveCellsET];
 
 	vector<TGraphErrors*> vgrRatePerCellET, vgrRelRatePerCellET, vgrPromptPSDEffPerCellET, vgrDelayPSDEffPerCellET, vgrPromptEnEffPerCellET, vgrDelayEnEffPerCellET, vgrPosEffPerCellET, vgrEffPerCellET;
 	vector<TGraphErrors*> vgrPoEnMeanPerCellET, vgrPoEnSigmaPerCellET, vgrRelPoEnMeanPerCellET, vgrRelPoEnSigmaPerCellET, vgrRnPSDMeanPerCellET, vgrPoPSDMeanPerCellET, vgrRnPoDzMeanPerCellET, vgrRnPoDzSigmaPerCellET, vgrPoPosMeanPerCellET, vgrPoPosSigmaPerCellET;
+
+	TH1F* hgrRate_AllCells = new TH1F("hgrRate_AllCells","Rate for all cells;Time;Rate [Hz]",numBins,0,numBins);
 
 	TH1F* hPoEnMean_PerCell = new TH1F("hPoEnMean_PerCell","Po Energy Mean Per Cell;Cell;Energy [keV]",154,0,154);
 	TH1F* hPoEnSigmaPerCell = new TH1F("hPoEnSigmaPerCell","Po Energy Sigma Per Cell;Cell;Energy [keV]",154,0,154);
@@ -1447,6 +1570,10 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 
 		TGraphErrors *grPoPosSigmaPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);	
 		vgrPoPosSigmaPerCell.push_back(grPoPosSigmaPerCell_new);
+
+		TGraphErrors *grRelRnPoDzMeanPerCell_new = new TGraphErrors(NumActiveCells,xPerCell,y,xErrPerCell,yErr);	
+		vgrRelRnPoDzMeanPerCell.push_back(grRelRnPoDzMeanPerCell_new);
+
 
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
 		//Graphs for ET cells
@@ -1521,7 +1648,10 @@ void PlotResults(const int NUMCELLS, int NUMTREES, int PLOTFLAG, double PSDCUTLO
 		TH1F* hTotEff = new TH1F("hTotEff","Total Efficiency;Efficiency;Counts",hNumBins,0.94,1.0);
 		TH1F* hPoEnMeanPerCell = new TH1F("hPoEnMeanPerCell","Po Energy Mean Per Cell;Energy [MeVee];Counts",hNumBins,0.79,0.83);
 		TH1F* hDzMeanPerCell = new TH1F("hDzMeanPerCell","Dz Mean Per Cell;#Deltaz [mm];Counts",hNumBins,-5,5);
-cout<<"GETTING RESULTS"<<endl;		
+cout<<"GETTING RESULTS: bin "<<n<<endl;		
+
+//		if(PLOTFLAG==2 && n==(numBins-1)) NUMTREES = NUMTREES+2;
+
 		auto results = ReadAc227Trees(NUMCELLS, IDX, NUMTREES, n, PLOTFLAG, PSDCUTLOW, PSDCUTHIGH);
 		IDX 	  	 = get<0>(results);
 		tstamp    	 = get<1>(results);
@@ -1556,6 +1686,7 @@ cout<<"GETTING RESULTS"<<endl;
 		double centerCellPoEnMean = vPoEnMean[0][76], centerCellPoEnMeanErr = vPoEnMean[1][76];
 		double centerCellPoEnSigma = vPoEnSigma[0][76], centerCellPoEnSigmaErr = vPoEnSigma[1][76];
 
+		if(PLOTFLAG==1){
 		for(int i=0;i<NUMCELLS;i++){
 
 			exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
@@ -1593,18 +1724,6 @@ cout<<"GETTING RESULTS"<<endl;
 
 			hPoEnSigmaPerCell->SetBinContent(i,vPoEnSigma[0][i]*1000);
 			hPoEnSigmaPerCell->SetBinError(i,vPoEnSigma[1][i]*1000);
-
-			double relPoEnMean = centerCellPoEnMean - vPoEnMean[0][i];
-			double relPoEnMeanErr = sqrt(pow(centerCellPoEnMeanErr,2) + pow(vPoEnMean[1][i],2));
-
-			vgrRelPoEnMeanPerCell[n]->SetPoint(grPt,i,relPoEnMean*1000);
-			vgrRelPoEnMeanPerCell[n]->SetPointError(grPt,0,relPoEnMeanErr*1000);			
-
-			double relPoEnSigma = centerCellPoEnSigma - vPoEnSigma[0][i];
-			double relPoEnSigmaErr = sqrt(pow(centerCellPoEnSigmaErr,2) + pow(vPoEnSigma[1][i],2));
-
-			vgrRelPoEnSigmaPerCell[n]->SetPoint(grPt,i,relPoEnSigma*1000);
-			vgrRelPoEnSigmaPerCell[n]->SetPointError(grPt,0,relPoEnSigmaErr*1000);
 
 			vgrPromptPSDEffPerCell[n]->SetPoint(grPt,i,vPSDEff[0][i]);
 			vgrPromptPSDEffPerCell[n]->SetPointError(grPt,0,vPSDEff[1][i]);
@@ -1668,18 +1787,6 @@ cout<<"GETTING RESULTS"<<endl;
 				vgrPoEnSigmaPerCellET[n]->SetPoint(grPtET,i,vPoEnSigma[0][i]*1000);
 				vgrPoEnSigmaPerCellET[n]->SetPointError(grPtET,0,vPoEnSigma[1][i]*1000);
 
-				relPoEnMean = centerCellPoEnMean - vPoEnMean[0][i];
-				relPoEnMeanErr = sqrt(pow(centerCellPoEnMeanErr,2) + pow(vPoEnMean[1][i],2));
-
-				vgrRelPoEnMeanPerCellET[n]->SetPoint(grPtET,i,relPoEnMean*1000);
-				vgrRelPoEnMeanPerCellET[n]->SetPointError(grPtET,0,relPoEnMeanErr*1000);			
-
-				relPoEnSigma = centerCellPoEnSigma - vPoEnSigma[0][i];
-				relPoEnSigmaErr = sqrt(pow(centerCellPoEnSigmaErr,2) + pow(vPoEnSigma[1][i],2));
-
-				vgrRelPoEnSigmaPerCellET[n]->SetPoint(grPtET,i,relPoEnSigma*1000);
-				vgrRelPoEnSigmaPerCellET[n]->SetPointError(grPtET,0,relPoEnSigmaErr*1000);
-
 				vgrPromptPSDEffPerCellET[n]->SetPoint(grPtET,i,vPSDEff[0][i]);
 				vgrPromptPSDEffPerCellET[n]->SetPointError(grPtET,0,vPSDEff[1][i]);
 
@@ -1721,17 +1828,34 @@ cout<<"GETTING RESULTS"<<endl;
 			}	
 		}
 
+		} //if(PLOTFLAG==1)
 		grRate_AllCells->SetPoint(n,tstamp,vRate[0][NUMCELLS]*1000);	//convert to Hz
 		grRate_AllCells->SetPointError(n,0,vRate[1][NUMCELLS]*1000);
 
+		hgrRate_AllCells->SetBinContent(n,vRate[0][NUMCELLS]*1000);
+		hgrRate_AllCells->SetBinError(n,vRate[1][NUMCELLS]*1000);
+	
 		grN_AllCells->SetPoint(n,tstamp,vN[0][NUMCELLS]);
 		grN_AllCells->SetPointError(n,0,vN[1][NUMCELLS]);
 	
 		grLifetime_AllCells->SetPoint(n,tstamp,vLifetime[0][NUMCELLS]);
 		grLifetime_AllCells->SetPointError(n,0,vLifetime[1][NUMCELLS]);
+cout<<"Filling effciency graphs"<<endl;
 
-		grEnEff_AllCells->SetPoint(n,tstamp,vEnEff[2][NUMCELLS]);
-		grEnEff_AllCells->SetPointError(n,0,vEnEff[3][NUMCELLS]);
+		grPromptEnEff_AllCells->SetPoint(n,tstamp,vEnEff[0][NUMCELLS]);
+		grPromptEnEff_AllCells->SetPointError(n,0,vEnEff[1][NUMCELLS]);
+
+		grDelayEnEff_AllCells->SetPoint(n,tstamp,vEnEff[2][NUMCELLS]);
+		grDelayEnEff_AllCells->SetPointError(n,0,vEnEff[3][NUMCELLS]);
+
+		grPromptPSDEff_AllCells->SetPoint(n,tstamp,vPSDEff[0][NUMCELLS]);
+		grPromptPSDEff_AllCells->SetPointError(n,0,vPSDEff[1][NUMCELLS]);
+
+		grDelayPSDEff_AllCells->SetPoint(n,tstamp,vPSDEff[2][NUMCELLS]);
+		grDelayPSDEff_AllCells->SetPointError(n,0,vPSDEff[3][NUMCELLS]);
+
+		grPosEff_AllCells->SetPoint(n,tstamp,vPosEff[0][NUMCELLS]);
+		grPosEff_AllCells->SetPointError(n,0,vPosEff[1][NUMCELLS]);
 
 		grTotEff_AllCells->SetPoint(n,tstamp,vTotEff[0][NUMCELLS]);
 		grTotEff_AllCells->SetPointError(n,0,vTotEff[1][NUMCELLS]);	
@@ -1788,7 +1912,7 @@ cout<<"GETTING RESULTS"<<endl;
 		cDzMeanPerCell->SaveAs(Form("%s/HistDzMeanPerCell_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),n));
 
 		gStyle->SetPaintTextFormat("2.2f");
-		gStyle->SetOptStat(0);
+//		gStyle->SetOptStat(0);
 		TCanvas *cRatePerCell = new TCanvas("cRatePerCell","Rate per Cell",1);
 		gPad->SetRightMargin(0.16);
 		hRatePerCell->SetMinimum(3.0);
@@ -1800,6 +1924,10 @@ cout<<"GETTING RESULTS"<<endl;
 		hRelRatePerCell->SetMinimum(0.95);
 		hRelRatePerCell->Draw("colz && text");
 		cRelRatePerCell->SaveAs(Form("%s/RelRatePerCell_%i.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS"),n));
+
+		TFile *f = new TFile("AD_PhysNeutrino_RateHist_noZFid_TotDetector.root","RECREATE");
+		hRatePerCell->Write();
+		f->Close();
 
 		delete cRate;
 		delete cN;
@@ -1825,7 +1953,9 @@ cout<<"GETTING RESULTS"<<endl;
 	//--------------------------------------------------------------------------
 	//Plot Graphs
 	if(PLOTFLAG==2){
-
+	gStyle->SetOptStat(11);
+	gStyle->SetOptFit(1111);
+cout<<"Make canvas"<<endl;
 	TCanvas *cRateAllCells = new TCanvas("cRateAllCells","Rate All Cells",1);
 	gPad->SetGrid();
 	grRate_AllCells->SetTitle("Total Rate of Detector");
@@ -1838,7 +1968,7 @@ cout<<"GETTING RESULTS"<<endl;
 	grRate_AllCells->Draw("AP");
 	grRate_AllCells->Fit("pol0");
 	grRate_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grRate_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grRate_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cRateAllCells->SaveAs(Form("%s/Rate_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cNAllCells = new TCanvas("cNAllCells","N All Cells",1);
@@ -1852,7 +1982,7 @@ cout<<"GETTING RESULTS"<<endl;
 	grN_AllCells->Draw("AP");
 	grN_AllCells->Fit("pol0");
 	grN_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grN_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grN_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cNAllCells->SaveAs(Form("%s/N_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cLifetimeAllCells = new TCanvas("cLifetimeAllCells","Lifetime All Cells",1);
@@ -1866,8 +1996,52 @@ cout<<"GETTING RESULTS"<<endl;
 	grLifetime_AllCells->Draw("AP");
 	grLifetime_AllCells->Fit("pol0");
 	grLifetime_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grLifetime_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grLifetime_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cLifetimeAllCells->SaveAs(Form("%s/Lifetime_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
+	TCanvas *cAllEffAllCells = new TCanvas("cAllEffAllCells","All Efficiency All Cells",1);
+	gPad->SetGrid();
+	grTotEff_AllCells->SetTitle("Cut Efficiencies;;Eff");
+	grTotEff_AllCells->GetXaxis()->SetLabelOffset(0.028);
+	grTotEff_AllCells->GetXaxis()->SetTimeDisplay(1);
+	grTotEff_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
+	grTotEff_AllCells->SetMarkerStyle(34);
+	grTotEff_AllCells->SetMarkerColor(kBlack);
+	grTotEff_AllCells->SetLineColor(kBlack);
+	grTotEff_AllCells->Draw("AP");
+
+	grPromptEnEff_AllCells->SetMarkerStyle(20);
+	grPromptEnEff_AllCells->SetMarkerColor(kBlue);
+	grPromptEnEff_AllCells->SetLineColor(kBlue);
+	grPromptEnEff_AllCells->Draw("P");
+	grDelayEnEff_AllCells->SetMarkerStyle(20);
+	grDelayEnEff_AllCells->SetMarkerColor(kMagenta);
+	grDelayEnEff_AllCells->SetLineColor(kMagenta);
+	grDelayEnEff_AllCells->Draw("P");
+
+	grPromptPSDEff_AllCells->SetMarkerStyle(21);
+	grPromptPSDEff_AllCells->SetMarkerColor(kBlue);
+	grPromptPSDEff_AllCells->SetLineColor(kBlue);
+	grPromptPSDEff_AllCells->Draw("P");
+	grDelayPSDEff_AllCells->SetMarkerStyle(21);
+	grDelayPSDEff_AllCells->SetMarkerColor(kMagenta);
+	grDelayPSDEff_AllCells->SetLineColor(kMagenta);
+	grDelayPSDEff_AllCells->Draw("P");
+
+	grPosEff_AllCells->SetMarkerStyle(22);
+	grPosEff_AllCells->SetMarkerColor(8);
+	grPosEff_AllCells->SetLineColor(8);
+	grPosEff_AllCells->Draw("P");
+
+	TLegend *leg = new TLegend(.78,.78,.98,.98);
+	leg->AddEntry(grPromptPSDEff_AllCells,"Prompt PSD","p");
+	leg->AddEntry(grDelayPSDEff_AllCells,"Delay PSD","p");
+	leg->AddEntry(grPromptEnEff_AllCells,"Prompt Energy","p");
+	leg->AddEntry(grDelayEnEff_AllCells,"Delay Energy","p");
+	leg->AddEntry(grPosEff_AllCells,"Position","p");
+	leg->AddEntry(grTotEff_AllCells,"Total","p");
+	leg->Draw();
+	cAllEffAllCells->SaveAs(Form("%s/grAllEffAllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cTotEffAllCells = new TCanvas("cTotEffAllCells","Tot Eff All Cells",1);
 	gPad->SetGrid();
@@ -1877,15 +2051,16 @@ cout<<"GETTING RESULTS"<<endl;
 	grTotEff_AllCells->SetMarkerStyle(20);
 	grTotEff_AllCells->SetMarkerColor(kBlue);
 	grTotEff_AllCells->SetLineColor(kBlue);
+	grTotEff_AllCells->GetYaxis()->SetRangeUser(0.95,1.02);
 	grTotEff_AllCells->Draw("AP");
-	grTotEff_AllCells->Fit("pol1");
+	grTotEff_AllCells->Fit("pol0");
 	grTotEff_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grTotEff_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grTotEff_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cTotEffAllCells->SaveAs(Form("%s/TotEff_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoEnMeanAllCells = new TCanvas("cPoEnMeanAllCells","Po Mean All Cells",1);
 	gPad->SetGrid();
-	grPoEnMean_AllCells->SetTitle("Total Po-215 Mean of Detector");
+	grPoEnMean_AllCells->SetTitle("Total Po-215 Energy Mean of Detector");
 	grPoEnMean_AllCells->GetYaxis()->SetTitle("Energy [MeVee]");
 	grPoEnMean_AllCells->GetXaxis()->SetLabelOffset(0.028);
 	grPoEnMean_AllCells->GetYaxis()->SetTitleOffset(1.43);
@@ -1893,14 +2068,14 @@ cout<<"GETTING RESULTS"<<endl;
 	grPoEnMean_AllCells->SetMarkerColor(kBlue);
 	grPoEnMean_AllCells->SetLineColor(kBlue);
 	grPoEnMean_AllCells->Draw("AP");
-	grPoEnMean_AllCells->Fit("pol1");
+	grPoEnMean_AllCells->Fit("pol0");
 	grPoEnMean_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grPoEnMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grPoEnMean_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cPoEnMeanAllCells->SaveAs(Form("%s/PoEnMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoEnSigmaAllCells = new TCanvas("cPoEnSigmaAllCells","Po Sigma All Cells",1);
 	gPad->SetGrid();
-	grPoEnSigma_AllCells->SetTitle("Total Po-215 Sigma of Detector");
+	grPoEnSigma_AllCells->SetTitle("Total Po-215 Energy Sigma of Detector");
 	grPoEnSigma_AllCells->GetYaxis()->SetTitle("Energy [MeVee]");
 	grPoEnSigma_AllCells->GetXaxis()->SetLabelOffset(0.028);
 	grPoEnSigma_AllCells->GetYaxis()->SetTitleOffset(1.43);
@@ -1910,7 +2085,7 @@ cout<<"GETTING RESULTS"<<endl;
 	grPoEnSigma_AllCells->Draw("AP");
 	grPoEnSigma_AllCells->Fit("pol1");
 	grPoEnSigma_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grPoEnSigma_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grPoEnSigma_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cPoEnSigmaAllCells->SaveAs(Form("%s/PoEnSigma_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoPSDMeanAllCells = new TCanvas("cPoPSDMeanAllCells","Po PSD Mean All Cells",1);
@@ -1924,7 +2099,7 @@ cout<<"GETTING RESULTS"<<endl;
 	grPoPSDMean_AllCells->Draw("AP");
 	grPoPSDMean_AllCells->Fit("pol1");
 	grPoPSDMean_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grPoPSDMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grPoPSDMean_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cPoPSDMeanAllCells->SaveAs(Form("%s/PoPSDMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cRnPoDzMeanAllCells = new TCanvas("cRnPoDzMeanAllCells","RnPo Dz Mean All Cells",1);
@@ -1936,9 +2111,9 @@ cout<<"GETTING RESULTS"<<endl;
 	grRnPoDzMean_AllCells->SetMarkerColor(kBlue);
 	grRnPoDzMean_AllCells->SetLineColor(kBlue);
 	grRnPoDzMean_AllCells->Draw("AP");
-	grRnPoDzMean_AllCells->Fit("pol1");
+	grRnPoDzMean_AllCells->Fit("pol0");
 	grRnPoDzMean_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grRnPoDzMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grRnPoDzMean_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cRnPoDzMeanAllCells->SaveAs(Form("%s/RnPoDzMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cRnPoDzSigmaAllCells = new TCanvas("cRnPoDzSigmaAllCells","RnPo Dz Sigma All Cells",1);
@@ -1950,9 +2125,9 @@ cout<<"GETTING RESULTS"<<endl;
 	grRnPoDzSigma_AllCells->SetMarkerColor(kBlue);
 	grRnPoDzSigma_AllCells->SetLineColor(kBlue);
 	grRnPoDzSigma_AllCells->Draw("AP");
-	grRnPoDzSigma_AllCells->Fit("pol1");
+	grRnPoDzSigma_AllCells->Fit("pol0");
 	grRnPoDzSigma_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grRnPoDzSigma_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grRnPoDzSigma_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cRnPoDzSigmaAllCells->SaveAs(Form("%s/RnPoDzSigma_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoPosMeanAllCells = new TCanvas("cPoPosMeanAllCells","RnPo Dz Mean All Cells",1);
@@ -1964,9 +2139,9 @@ cout<<"GETTING RESULTS"<<endl;
 	grPoPosMean_AllCells->SetMarkerColor(kBlue);
 	grPoPosMean_AllCells->SetLineColor(kBlue);
 	grPoPosMean_AllCells->Draw("AP");
-	grPoPosMean_AllCells->Fit("pol1");
+	grPoPosMean_AllCells->Fit("pol0");
 	grPoPosMean_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grPoPosMean_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grPoPosMean_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cPoPosMeanAllCells->SaveAs(Form("%s/PoPosMean_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
 	TCanvas *cPoPosSigmaAllCells = new TCanvas("cPoPosSigmaAllCells","RnPo Dz Mean All Cells",1);
@@ -1978,10 +2153,125 @@ cout<<"GETTING RESULTS"<<endl;
 	grPoPosSigma_AllCells->SetMarkerColor(kBlue);
 	grPoPosSigma_AllCells->SetLineColor(kBlue);
 	grPoPosSigma_AllCells->Draw("AP");
-	grPoPosSigma_AllCells->Fit("pol1");
+	grPoPosSigma_AllCells->Fit("pol0");
 	grPoPosSigma_AllCells->GetXaxis()->SetTimeDisplay(1);
-	grPoPosSigma_AllCells->GetXaxis()->SetTimeFormat("#splitline{%m/%d}{%H:%M}");
+	grPoPosSigma_AllCells->GetXaxis()->SetTimeFormat("%m/%d");
 	cPoPosSigmaAllCells->SaveAs(Form("%s/PoPosSigma_AllCells.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
+	//==============================================================
+	//create relative graphs
+	double x[numBins], y[numBins];
+	double xErr[numBins], yErr[numBins];
+
+	TGraphErrors *grRelRate_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grRelPoEnMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grRelPoEnSigma_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grRelPoPosRMS_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+	TGraphErrors *grRelRnPoDzMean_AllCells = new TGraphErrors(numBins,x,y,xErr,yErr);
+
+	TF1 *fRatePol = new TF1("fRelRatePol","pol0");
+	TF1 *fEMeanPol = new TF1("fEMeanPol","pol0");
+	TF1 *fESigmaPol = new TF1("fESigmaPol","pol0");
+	TF1 *fPosRMSPol = new TF1("fPosRMSPol","pol0");
+	TF1 *fDzMeanPol = new TF1("fDzMeanPol","pol0");
+
+	grRate_AllCells->Fit(fRatePol);
+	grPoEnMean_AllCells->Fit(fEMeanPol);
+	grPoEnSigma_AllCells->Fit(fESigmaPol);
+	grPoPosSigma_AllCells->Fit(fPosRMSPol);
+	grRnPoDzMean_AllCells->Fit(fDzMeanPol);
+
+	double avgRate = fRatePol->GetParameter(0), avgRateErr = fRatePol->GetParError(0);
+	double avgEMean = fEMeanPol->GetParameter(0), avgEMeanErr = fEMeanPol->GetParError(0);
+	double avgESigma = fESigmaPol->GetParameter(0), avgESigmaErr = fESigmaPol->GetParError(0);
+	double avgPosRMS = fPosRMSPol->GetParameter(0), avgPosRMSErr = fPosRMSPol->GetParError(0);
+	double avgDzMean = fDzMeanPol->GetParameter(0), avgDzMeanErr = fDzMeanPol->GetParError(0);
+
+	double relRate, relRateErr;
+	double relEMean, relEMeanErr;
+	double relESigma, relESigmaErr;
+	double relPosRMS, relPosRMSErr;
+	double relDzMean, relDzMeanErr;
+
+	double grx, gry, gryErr;
+	for(int i=0;i<numBins;i++){
+		grRate_AllCells->GetPoint(i,grx,gry);
+		gryErr = grRate_AllCells->GetErrorY(i);
+
+		relRate = gry/avgRate;
+		relRateErr = relRate * sqrt(pow(gryErr/gry,2) + pow(avgRateErr/avgRate,2));
+
+		grRelRate_AllCells->SetPoint(i,grx,relRate);
+		grRelRate_AllCells->SetPointError(i,0,relRateErr);
+
+		//--------------------------------------------------
+		grPoEnMean_AllCells->GetPoint(i,grx,gry);
+		gryErr = grPoEnMean_AllCells->GetErrorY(i);
+	
+		relEMean = gry/avgEMean;
+		relEMeanErr = relEMean * sqrt(pow(gryErr/gry,2) + pow(avgEMeanErr/avgEMean,2));	
+
+		grRelPoEnMean_AllCells->SetPoint(i,grx,relEMean);
+		grRelPoEnMean_AllCells->SetPointError(i,0,relEMeanErr);
+	
+		//--------------------------------------------------
+		grPoEnSigma_AllCells->GetPoint(i,grx,gry);
+		gryErr = grPoEnSigma_AllCells->GetErrorY(i);
+	
+		relESigma = gry/avgESigma;
+		relESigmaErr = relESigma * sqrt(pow(gryErr/gry,2) + pow(avgESigmaErr/avgESigma,2));	
+
+		grRelPoEnSigma_AllCells->SetPoint(i,grx,relESigma);
+		grRelPoEnSigma_AllCells->SetPointError(i,0,relESigmaErr);
+
+		//--------------------------------------------------
+		grPoPosSigma_AllCells->GetPoint(i,grx,gry);
+		gryErr = grPoPosSigma_AllCells->GetErrorY(i);
+	
+		relPosRMS = gry/avgPosRMS;
+		relPosRMSErr = relPosRMS * sqrt(pow(gryErr/gry,2) + pow(avgPosRMSErr/avgPosRMS,2));	
+
+		grRelPoPosRMS_AllCells->SetPoint(i,grx,relPosRMS);
+		grRelPoPosRMS_AllCells->SetPointError(i,0,relPosRMSErr);
+
+		//--------------------------------------------------
+		grRnPoDzMean_AllCells->GetPoint(i,grx,gry);
+		gryErr = grRnPoDzMean_AllCells->GetErrorY(i);
+	
+		relDzMean = gry/avgDzMean;
+		relDzMeanErr = relDzMean * sqrt(pow(gryErr/gry,2) + pow(avgDzMeanErr/avgDzMean,2));	
+
+		grRelRnPoDzMean_AllCells->SetPoint(i,grx,relDzMean);
+		grRelRnPoDzMean_AllCells->SetPointError(i,0,relDzMeanErr);
+	}
+
+
+	
+	//==============================================================
+	TFile *saveGraphsFile = new TFile("AD_NeutrinoTGraphs_noZFidCut.root","RECREATE");
+	hgrRate_AllCells->Write();
+	grRate_AllCells->Write("grRate");
+	grPromptEnEff_AllCells->Write("grPromptEnEff");
+	grDelayEnEff_AllCells->Write("grDelayEnEff");
+	grPromptPSDEff_AllCells->Write("grPromptPSDEff");
+	grDelayPSDEff_AllCells->Write("grDelayPSDEff");
+	grPosEff_AllCells->Write("grPosEff");
+	grTotEff_AllCells->Write("grTotEff");
+	grPoEnMean_AllCells->Write("grPoEnMean");
+	grPoEnSigma_AllCells->Write("grPoEnSigma");
+	grRnPoDzMean_AllCells->Write("grRnPoDzMean");
+	grRnPoDzSigma_AllCells->Write("grRnPoDzSigma");
+	grPoPosMean_AllCells->Write("grPoPosMean");
+	grPoPosSigma_AllCells->Write("grPoPosSigma");
+
+	grRelRate_AllCells->Write("grRelRate");
+	grRelPoEnMean_AllCells->Write("grRelPoEnMean");
+	grRelPoEnSigma_AllCells->Write("grRelPoEnSigma");
+	grRelPoPosRMS_AllCells->Write("grRelPoPosRMS");
+	grRelRnPoDzMean_AllCells->Write("grRelRnPoDzMean");
+
+	saveGraphsFile->Close(); 
+
 	}
 
 	//==========================================================================================
@@ -2149,34 +2439,6 @@ cout<<"GETTING RESULTS"<<endl;
 	vgrPoEnSigmaPerCell[0]->Fit("pol0");
 	cPoEnSigmaPerCell->SaveAs(Form("%s/PoEnSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
-	TCanvas *cRelPoEnMeanPerCell = new TCanvas("cRelPoEnMeanPerCell","Po Energy Mean Per Cell",1);
-	gPad->SetGrid();
-	vgrRelPoEnMeanPerCell[0]->SetTitle("Relative Po Energy Mean Per Cell;Cell;Energy [keV]");
-	vgrRelPoEnMeanPerCell[0]->SetMarkerStyle(20);
-	vgrRelPoEnMeanPerCell[0]->SetMarkerColor(kBlue);
-	vgrRelPoEnMeanPerCell[0]->SetLineColor(kBlue);
-	vgrRelPoEnMeanPerCell[0]->Draw("AP");
-	vgrRelPoEnMeanPerCellET[0]->SetMarkerStyle(20);
-	vgrRelPoEnMeanPerCellET[0]->SetMarkerColor(kRed);
-	vgrRelPoEnMeanPerCellET[0]->SetLineColor(kRed);
-	vgrRelPoEnMeanPerCellET[0]->Draw("P");
-	vgrRelPoEnMeanPerCell[0]->Fit("pol0");
-	cRelPoEnMeanPerCell->SaveAs(Form("%s/RelPoEnMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
-	TCanvas *cRelPoEnSigmaPerCell = new TCanvas("cRelPoEnSigmaPerCell","Po Energy Sigma Per Cell",1);
-	gPad->SetGrid();
-	vgrRelPoEnSigmaPerCell[0]->SetTitle("Relative Po Energy Sigma Per Cell;Cell;Sigma [keV]");
-	vgrRelPoEnSigmaPerCell[0]->SetMarkerStyle(20);
-	vgrRelPoEnSigmaPerCell[0]->SetMarkerColor(kBlue);
-	vgrRelPoEnSigmaPerCell[0]->SetLineColor(kBlue);
-	vgrRelPoEnSigmaPerCell[0]->Draw("AP");
-	vgrRelPoEnSigmaPerCellET[0]->SetMarkerStyle(20);
-	vgrRelPoEnSigmaPerCellET[0]->SetMarkerColor(kRed);
-	vgrRelPoEnSigmaPerCellET[0]->SetLineColor(kRed);
-	vgrRelPoEnSigmaPerCellET[0]->Draw("P");
-	vgrRelPoEnSigmaPerCell[0]->Fit("pol0");
-	cRelPoEnSigmaPerCell->SaveAs(Form("%s/RelPoEnSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
-
 	TCanvas *cRnPoPSDMeanPerCell = new TCanvas("cRnPoPSDMeanPerCell","RnPo PSD Mean Per Cell",1);
 	gPad->SetGrid();
 	vgrRnPSDMeanPerCell[0]->SetTitle("RnPo PSD Mean Per Cell;Cell;PSD [arb]");
@@ -2246,8 +2508,89 @@ cout<<"GETTING RESULTS"<<endl;
 	vgrPoPosSigmaPerCell[0]->Fit("pol0");
 	cPoPosSigmaPerCell->SaveAs(Form("%s/PoPosSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
 
+	//========================================================================================================
+	//Create graphs relative to the mean
 
-	TFile *fOutPerCell = new TFile("AllTime_PlotsPerCell_ZFidCut.root","RECREATE");
+	TF1 *fEnMeanPol = new TF1("fEnMeanPol","pol0");
+	TF1 *fEnSigmaPol = new TF1("fEnSigmaPol","pol0");
+	TF1 *fDzMeanPol = new TF1("fDzMeanPol","pol0");
+	
+	vgrPoEnMeanPerCell[0]->Fit(fEnMeanPol);
+	vgrPoEnSigmaPerCell[0]->Fit(fEnSigmaPol);
+	vgrRnPoDzMeanPerCell[0]->Fit(fDzMeanPol);
+
+	double avgPoEnMean = fEnMeanPol->GetParameter(0)/1000.0, avgPoEnMeanErr = fEnMeanPol->GetParError(0)/1000.0;
+	double avgPoEnSigma = fEnSigmaPol->GetParameter(0)/1000.0, avgPoEnSigmaErr = fEnSigmaPol->GetParError(0)/1000.0;		
+	double avgRnPoDzMean = fDzMeanPol->GetParameter(0), avgRnPoDzMeanErr = fDzMeanPol->GetParError(0);
+
+	double relPoEnMean, relPoEnMeanErr, relPoEnSigma, relPoEnSigmaErr, relRnPoDzMean, relRnPoDzMeanErr;
+
+	grPt = 0;
+	for(int i=0;i<NUMCELLS;i++){
+		exclude = find(begin(ExcludeCellArr), end(ExcludeCellArr), i) != end(ExcludeCellArr);
+		if(!exclude){
+
+			relPoEnMean = vPoEnMean[0][i]/avgPoEnMean;
+			relPoEnMeanErr = relPoEnMean * sqrt(pow(vPoEnMean[1][i]/vPoEnMean[0][i],2) + pow(avgPoEnMeanErr/avgPoEnMean,2));
+
+			vgrRelPoEnMeanPerCell[0]->SetPoint(grPt,i,relPoEnMean);
+			vgrRelPoEnMeanPerCell[0]->SetPointError(grPt,0,relPoEnMeanErr);
+		
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			relPoEnSigma = vPoEnSigma[0][i]/avgPoEnSigma;
+			relPoEnSigmaErr = relPoEnSigma * sqrt(pow(vPoEnSigma[1][i]/vPoEnSigma[0][i],2) + pow(avgPoEnSigmaErr/avgPoEnSigma,2));
+
+			vgrRelPoEnSigmaPerCell[0]->SetPoint(grPt,i,relPoEnSigma);
+			vgrRelPoEnSigmaPerCell[0]->SetPointError(grPt,0,relPoEnSigmaErr);
+
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			relRnPoDzMean = vRnPoDzMean[0][i]/avgRnPoDzMean;
+			relRnPoDzMeanErr = relRnPoDzMean * sqrt(pow(vRnPoDzMean[1][i]/vRnPoDzMean[0][i],2) + pow(avgRnPoDzMeanErr/avgRnPoDzMean,2));				
+
+			vgrRelRnPoDzMeanPerCell[0]->SetPoint(grPt,i,relRnPoDzMean);
+			vgrRelRnPoDzMeanPerCell[0]->SetPointError(grPt,0,relRnPoDzMeanErr);
+
+			grPt++;
+		}
+	}
+
+
+	vgrRelPoEnMeanPerCell[0]->SetTitle("Relative Po Energy Mean Per Cell;Cell;Energy [MeV]");
+	vgrRelPoEnSigmaPerCell[0]->SetTitle("Relative Po Energy Sigma Per Cell;Cell;Sigma [MeV]");
+
+/*
+	TCanvas *cRelPoEnMeanPerCell = new TCanvas("cRelPoEnMeanPerCell","Po Energy Mean Per Cell",1);
+	gPad->SetGrid();
+	vgrRelPoEnMeanPerCell[0]->SetTitle("Relative Po Energy Mean Per Cell;Cell;Energy [keV]");
+	vgrRelPoEnMeanPerCell[0]->SetMarkerStyle(20);
+	vgrRelPoEnMeanPerCell[0]->SetMarkerColor(kBlue);
+	vgrRelPoEnMeanPerCell[0]->SetLineColor(kBlue);
+	vgrRelPoEnMeanPerCell[0]->Draw("AP");
+	vgrRelPoEnMeanPerCellET[0]->SetMarkerStyle(20);
+	vgrRelPoEnMeanPerCellET[0]->SetMarkerColor(kRed);
+	vgrRelPoEnMeanPerCellET[0]->SetLineColor(kRed);
+	vgrRelPoEnMeanPerCellET[0]->Draw("P");
+	vgrRelPoEnMeanPerCell[0]->Fit("pol0");
+	cRelPoEnMeanPerCell->SaveAs(Form("%s/RelPoEnMeanPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+
+	TCanvas *cRelPoEnSigmaPerCell = new TCanvas("cRelPoEnSigmaPerCell","Po Energy Sigma Per Cell",1);
+	gPad->SetGrid();
+	vgrRelPoEnSigmaPerCell[0]->SetTitle("Relative Po Energy Sigma Per Cell;Cell;Sigma [keV]");
+	vgrRelPoEnSigmaPerCell[0]->SetMarkerStyle(20);
+	vgrRelPoEnSigmaPerCell[0]->SetMarkerColor(kBlue);
+	vgrRelPoEnSigmaPerCell[0]->SetLineColor(kBlue);
+	vgrRelPoEnSigmaPerCell[0]->Draw("AP");
+	vgrRelPoEnSigmaPerCellET[0]->SetMarkerStyle(20);
+	vgrRelPoEnSigmaPerCellET[0]->SetMarkerColor(kRed);
+	vgrRelPoEnSigmaPerCellET[0]->SetLineColor(kRed);
+	vgrRelPoEnSigmaPerCellET[0]->Draw("P");
+	vgrRelPoEnSigmaPerCell[0]->Fit("pol0");
+	cRelPoEnSigmaPerCell->SaveAs(Form("%s/RelPoEnSigmaPerCell.pdf",getenv("AD_AC227ANALYSIS_DATA_PLOTS")));
+*/
+
+
+
+	TFile *fOutPerCell = new TFile("AD_PhysNeutrino_TGraphs_noZFid_TotDetector.root","RECREATE");
 	vgrRatePerCell[0]->Write("grRatePerCell");
 	vgrRatePerCellET[0]->Write("grRatePerCellET");
 	vgrRelRatePerCell[0]->Write("grRelRatePerCell");
@@ -2263,9 +2606,7 @@ cout<<"GETTING RESULTS"<<endl;
 	vgrPoEnMeanPerCellET[0]->Write("grPoEnMeanET");
 	vgrPoEnSigmaPerCell[0]->Write("grPoEnSigma");		
 	vgrPoEnSigmaPerCellET[0]->Write("grPoEnSigmaET");		
-	vgrRelPoEnMeanPerCell[0]->Write("grRelPoEnMean");
 	vgrRelPoEnMeanPerCellET[0]->Write("grRelPoEnMeanET");
-	vgrRelPoEnSigmaPerCell[0]->Write("grRelPoEnSigma");
 	vgrRelPoEnSigmaPerCellET[0]->Write("grRelPoEnSigmaET");
 	vgrRnPSDMeanPerCell[0]->Write("grRnPSDMean");
 	vgrRnPSDMeanPerCellET[0]->Write("grRnPSDMeanET");
@@ -2277,6 +2618,10 @@ cout<<"GETTING RESULTS"<<endl;
 	vgrPoPosMeanPerCellET[0]->Write("grPoPosMeanET");	
 	vgrPoPosSigmaPerCell[0]->Write("grPoPosSigma");
 	vgrPoPosSigmaPerCellET[0]->Write("grPoPosSigmaET");
+
+	vgrRelPoEnMeanPerCell[0]->Write("grRelPoEnMean");
+	vgrRelPoEnSigmaPerCell[0]->Write("grRelPoEnSigma");
+	vgrRelRnPoDzMeanPerCell[0]->Write("grRelRnPoDzMean");
 
 	hPoEnMean_PerCell->Write();
 	hPoEnSigmaPerCell->Write();
